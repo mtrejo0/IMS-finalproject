@@ -1,0 +1,301 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>writer.py &mdash; 21M.385 Common Library  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="wavesrc.py" href="wavesrc.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> 21M.385 Common Library
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="audio.html">audio.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clock.html">clock.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core.html">core.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gfxutil.html">gfxutil.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="keydisplay.html">keydisplay.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="leap.html">leap.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metro.html">metro.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mixer.html">mixer.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modifier.html">modifier.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="note.html">note.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="noteseq.html">noteseq.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="screen.html">screen.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="synth.html">synth.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wavegen.html">wavegen.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wavesrc.html">wavesrc.py</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">writer.py</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">21M.385 Common Library</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>writer.py</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="module-imslib.writer">
+<span id="writer-py"></span><h1>writer.py<a class="headerlink" href="#module-imslib.writer" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="imslib.writer.AudioWriter">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">imslib.writer.</span></span><span class="sig-name descname"><span class="pre">AudioWriter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filebase</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_channels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.writer.AudioWriter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for recording audio data. To use, create an AudioWriter, and pass its method
+<a class="reference internal" href="#imslib.writer.AudioWriter.add_audio" title="imslib.writer.AudioWriter.add_audio"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_audio()</span></code></a> into Audio’s <cite>listen_func</cite>. See <a class="reference internal" href="audio.html#imslib.audio.Audio" title="imslib.audio.Audio"><code class="xref py py-class docutils literal notranslate"><span class="pre">imslib.audio.Audio</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filebase</strong> – The name of the file to output (without the extension). File extension
+is added automatically.</p></li>
+<li><p><strong>num_channels</strong> – When writing the wave file, write with this many channels</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.writer.AudioWriter.add_audio">
+<span class="sig-name descname"><span class="pre">add_audio</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_channels</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.writer.AudioWriter.add_audio" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to add more audio into AudioWriter’s internal buffer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – the frames of audio data.</p></li>
+<li><p><strong>num_channels</strong> – number of channels of interleaved audio data in <cite>data</cite>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.writer.AudioWriter.start">
+<span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#imslib.writer.AudioWriter.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Starts recording audio frames, by accepting data from <a class="reference internal" href="#imslib.writer.AudioWriter.add_audio" title="imslib.writer.AudioWriter.add_audio"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_audio()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.writer.AudioWriter.stop">
+<span class="sig-name descname"><span class="pre">stop</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#imslib.writer.AudioWriter.stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stops recording audio frames by ignoring any calls to <a class="reference internal" href="#imslib.writer.AudioWriter.add_audio" title="imslib.writer.AudioWriter.add_audio"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_audio()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.writer.AudioWriter.toggle">
+<span class="sig-name descname"><span class="pre">toggle</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#imslib.writer.AudioWriter.toggle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Toggles between calling <cite>start()</cite> and <cite>stop()</cite></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="imslib.writer.combine_buffers">
+<span class="sig-prename descclassname"><span class="pre">imslib.writer.</span></span><span class="sig-name descname"><span class="pre">combine_buffers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffers</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.writer.combine_buffers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Concatenates a list of numpy arrays into a single numpy array</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>buffers</strong> – A list of numpy arrays</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A concatenated numpy float array with length being the sum of lengths of 
+arrays in input buffers.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="imslib.writer.convert_channels">
+<span class="sig-prename descclassname"><span class="pre">imslib.writer.</span></span><span class="sig-name descname"><span class="pre">convert_channels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_channels</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.writer.convert_channels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert an audio data buffer of a given number of channels to a different number of channels.
+Currently only handles going from mono to multi-channel, or from multi-channel to mono.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="imslib.writer.write_wave_file">
+<span class="sig-prename descclassname"><span class="pre">imslib.writer.</span></span><span class="sig-name descname"><span class="pre">write_wave_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.writer.write_wave_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write a Wave File</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>buf</strong> – Buffer of audio data as an interleaved numpy float array, assuming a range of [-1, 1]</p></li>
+<li><p><strong>num_channels</strong> – Number of channels in <cite>buf</cite></p></li>
+<li><p><strong>filename</strong> – Name of output file to write</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="wavesrc.html" class="btn btn-neutral float-left" title="wavesrc.py" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Eran Egozy
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

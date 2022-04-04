@@ -1,0 +1,616 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>clock.py &mdash; 21M.385 Common Library  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="core.py" href="core.html" />
+    <link rel="prev" title="audio.py" href="audio.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> 21M.385 Common Library
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="audio.html">audio.py</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">clock.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core.html">core.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gfxutil.html">gfxutil.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="keydisplay.html">keydisplay.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="leap.html">leap.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metro.html">metro.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mixer.html">mixer.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modifier.html">modifier.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="note.html">note.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="noteseq.html">noteseq.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="screen.html">screen.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="synth.html">synth.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wavegen.html">wavegen.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wavesrc.html">wavesrc.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="writer.html">writer.py</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">21M.385 Common Library</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>clock.py</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="module-imslib.clock">
+<span id="clock-py"></span><h1>clock.py<a class="headerlink" href="#module-imslib.clock" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="imslib.clock.AudioScheduler">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">imslib.clock.</span></span><span class="sig-name descname"><span class="pre">AudioScheduler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tempo_map</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.clock.AudioScheduler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates scheduled audio with a built-in Clock and Scheduler. As a generator,
+for it to work, it must be inserted into an Audio generator chain.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tempo_map</strong> – The TempoMap object that keeps track of tempo.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.clock.AudioScheduler.cancel">
+<span class="sig-name descname"><span class="pre">cancel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cmd</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.clock.AudioScheduler.cancel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attempts to remove the command object from the list of commands to be
+executed. Does nothing if <code class="docutils literal notranslate"><span class="pre">cmd</span></code> is not found.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>cmd</strong> – The command object to remove.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.clock.AudioScheduler.generate">
+<span class="sig-name descname"><span class="pre">generate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_frames</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_channels</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.clock.AudioScheduler.generate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes audio-generating commands at the correct tick.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>num_frames</strong> – An integer number of frames to generate.</p></li>
+<li><p><strong>num_channels</strong> – Number of channels. Can be 1 (mono) or 2 (stereo)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A tuple <code class="docutils literal notranslate"><span class="pre">(output,</span> <span class="pre">True)</span></code>. The output is a numpy array of length
+<strong>(num_frames * num_channels)</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.clock.AudioScheduler.get_tick">
+<span class="sig-name descname"><span class="pre">get_tick</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#imslib.clock.AudioScheduler.get_tick" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The tick corresponding to the current time.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.clock.AudioScheduler.get_time">
+<span class="sig-name descname"><span class="pre">get_time</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#imslib.clock.AudioScheduler.get_time" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The time elapsed in seconds.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.clock.AudioScheduler.now_str">
+<span class="sig-name descname"><span class="pre">now_str</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#imslib.clock.AudioScheduler.now_str" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A string containing newline-separated indicators for time, tick,
+and beat at the current time.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.clock.AudioScheduler.post_at_tick">
+<span class="sig-name descname"><span class="pre">post_at_tick</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tick</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.clock.AudioScheduler.post_at_tick" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a record for the function to execute at the specified tick value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>func</strong> – The function to call.</p></li>
+<li><p><strong>tick</strong> – The tick at which <code class="docutils literal notranslate"><span class="pre">func</span></code> should be called.</p></li>
+<li><p><strong>arg</strong> – An additional argument to pass into <code class="docutils literal notranslate"><span class="pre">func</span></code> it is called.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The command object created by this record.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.clock.AudioScheduler.set_generator">
+<span class="sig-name descname"><span class="pre">set_generator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gen</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.clock.AudioScheduler.set_generator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets a Generator object that supplies audio data. Generator must define the 
+method <code class="docutils literal notranslate"><span class="pre">generate(num_frames,</span> <span class="pre">num_channels)</span></code>, which returns a numpy array of 
+length <strong>(num_frames * num_channels)</strong>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>gen</strong> – The generator object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="imslib.clock.Clock">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">imslib.clock.</span></span><span class="sig-name descname"><span class="pre">Clock</span></span><a class="headerlink" href="#imslib.clock.Clock" title="Permalink to this definition">¶</a></dt>
+<dd><p>Time keeper object. Time starts at 0.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.clock.Clock.get_time">
+<span class="sig-name descname"><span class="pre">get_time</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#imslib.clock.Clock.get_time" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The current time, a float.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.clock.Clock.is_paused">
+<span class="sig-name descname"><span class="pre">is_paused</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#imslib.clock.Clock.is_paused" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>True if paused, else False</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.clock.Clock.set_time">
+<span class="sig-name descname"><span class="pre">set_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.clock.Clock.set_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the clock to a specific time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>t</strong> – The time to which the clock should be set, a float.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.clock.Clock.start">
+<span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#imslib.clock.Clock.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resumes advancing time from the point when it was paused.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.clock.Clock.stop">
+<span class="sig-name descname"><span class="pre">stop</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#imslib.clock.Clock.stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pauses the clock.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.clock.Clock.toggle">
+<span class="sig-name descname"><span class="pre">toggle</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#imslib.clock.Clock.toggle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Toggles between paused and unpaused.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="imslib.clock.Command">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">imslib.clock.</span></span><span class="sig-name descname"><span class="pre">Command</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tick</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.clock.Command" title="Permalink to this definition">¶</a></dt>
+<dd><p>An object that will execute a function exactly once with the given arguments.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tick</strong> – The tick value at which this command will be executed.</p></li>
+<li><p><strong>func</strong> – The function that should be called.</p></li>
+<li><p><strong>arg</strong> – An additional argument to pass into <code class="docutils literal notranslate"><span class="pre">func</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.clock.Command.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#imslib.clock.Command.execute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calls the given function with the arguments (tick, arg).</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="imslib.clock.Scheduler">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">imslib.clock.</span></span><span class="sig-name descname"><span class="pre">Scheduler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clock</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tempo_map</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.clock.Scheduler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allows commands to be posted and executed at certain tick values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>clock</strong> – The Clock object that keeps time.</p></li>
+<li><p><strong>tempo_map</strong> – The TempoMap object that keeps track of tempo.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.clock.Scheduler.cancel">
+<span class="sig-name descname"><span class="pre">cancel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cmd</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.clock.Scheduler.cancel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attempts to remove the command object from the list of commands to be
+executed. Does nothing if <code class="docutils literal notranslate"><span class="pre">cmd</span></code> is not found.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>cmd</strong> – The command object to remove.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.clock.Scheduler.get_tick">
+<span class="sig-name descname"><span class="pre">get_tick</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#imslib.clock.Scheduler.get_tick" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The tick corresponding to the current time.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.clock.Scheduler.get_time">
+<span class="sig-name descname"><span class="pre">get_time</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#imslib.clock.Scheduler.get_time" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The time elapsed in seconds.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.clock.Scheduler.now_str">
+<span class="sig-name descname"><span class="pre">now_str</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#imslib.clock.Scheduler.now_str" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A string containing newline-separated indicators for time, tick,
+and beat at the current time.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.clock.Scheduler.on_update">
+<span class="sig-name descname"><span class="pre">on_update</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#imslib.clock.Scheduler.on_update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes commands at the correct tick. Should be called as often as possible.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.clock.Scheduler.post_at_tick">
+<span class="sig-name descname"><span class="pre">post_at_tick</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tick</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.clock.Scheduler.post_at_tick" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a record for the function to execute at the specified tick value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>func</strong> – The function to call.</p></li>
+<li><p><strong>tick</strong> – The tick at which <code class="docutils literal notranslate"><span class="pre">func</span></code> should be called.</p></li>
+<li><p><strong>arg</strong> – An additional argument to pass into <code class="docutils literal notranslate"><span class="pre">func</span></code> when it is called.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The command object created by this record.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="imslib.clock.SimpleTempoMap">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">imslib.clock.</span></span><span class="sig-name descname"><span class="pre">SimpleTempoMap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bpm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">120</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.clock.SimpleTempoMap" title="Permalink to this definition">¶</a></dt>
+<dd><p>A simple tempo map to keep track of the relationship between time, ticks, and bpm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>bpm</strong> – The desired tempo, as beats per minute, of the tempo map.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.clock.SimpleTempoMap.get_tempo">
+<span class="sig-name descname"><span class="pre">get_tempo</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#imslib.clock.SimpleTempoMap.get_tempo" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The current bpm.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.clock.SimpleTempoMap.set_tempo">
+<span class="sig-name descname"><span class="pre">set_tempo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bpm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cur_time</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.clock.SimpleTempoMap.set_tempo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the tempo to a new bpm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bpm</strong> – The new desired tempo, as beats per minute.</p></li>
+<li><p><strong>cur_time</strong> – The current time, in seconds.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.clock.SimpleTempoMap.tick_to_time">
+<span class="sig-name descname"><span class="pre">tick_to_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tick</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.clock.SimpleTempoMap.tick_to_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts tick number into time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tick</strong> – The number of ticks.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The time in seconds corresponding to the given number of ticks.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.clock.SimpleTempoMap.time_to_tick">
+<span class="sig-name descname"><span class="pre">time_to_tick</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.clock.SimpleTempoMap.time_to_tick" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts time into tick number.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>time</strong> – The time elapsed, in seconds.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The integer number of ticks corresponding to the given amount of time.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="imslib.clock.TempoMap">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">imslib.clock.</span></span><span class="sig-name descname"><span class="pre">TempoMap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.clock.TempoMap" title="Permalink to this definition">¶</a></dt>
+<dd><p>A tempo map that reads points of timestamped ticks and linearly
+interpolates between points to determine tempo.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – A list of points, where each point is (time, tick).</p></li>
+<li><p><strong>filepath</strong> – The path to a file containing a list of markers, each 
+on a separate line. A marker is a tab-delimited pair of values: <code class="docutils literal notranslate"><span class="pre">time</span></code> and <code class="docutils literal notranslate"><span class="pre">delta_beats</span></code>.
+<code class="docutils literal notranslate"><span class="pre">delta_beats</span></code> is the number of elapsed beats (quarter notes) since the last marker
+Will read from file only if <code class="docutils literal notranslate"><span class="pre">data</span></code> is not provided.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.clock.TempoMap.tick_to_time">
+<span class="sig-name descname"><span class="pre">tick_to_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tick</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.clock.TempoMap.tick_to_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts tick number into time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tick</strong> – The number of ticks.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The time in seconds corresponding to the given number of ticks, ,
+linearly interpolated from the given data.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.clock.TempoMap.time_to_tick">
+<span class="sig-name descname"><span class="pre">time_to_tick</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.clock.TempoMap.time_to_tick" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts time into tick number.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>time</strong> – The time elapsed, in seconds.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The number of ticks corresponding to the given amount of time,
+linearly interpolated from the given data.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="imslib.clock.quantize_tick_up">
+<span class="sig-prename descclassname"><span class="pre">imslib.clock.</span></span><span class="sig-name descname"><span class="pre">quantize_tick_up</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tick</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.clock.quantize_tick_up" title="Permalink to this definition">¶</a></dt>
+<dd><p>Quantizes a given tick number to the closest higher tick on the grid.
+For example, for <code class="docutils literal notranslate"><span class="pre">tick=900</span></code> and <code class="docutils literal notranslate"><span class="pre">grid=480</span></code>, this returns <code class="docutils literal notranslate"><span class="pre">960</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tick</strong> – The tick number.</p></li>
+<li><p><strong>grid</strong> – The grid to be quanitzed to.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The closest higher tick on the grid.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="imslib.clock.tick_str">
+<span class="sig-prename descclassname"><span class="pre">imslib.clock.</span></span><span class="sig-name descname"><span class="pre">tick_str</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tick</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.clock.tick_str" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints the tick and the beat.
+:param tick: The tick number, an integer.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="core.html" class="btn btn-neutral float-right" title="core.py" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="audio.html" class="btn btn-neutral float-left" title="audio.py" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Eran Egozy
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

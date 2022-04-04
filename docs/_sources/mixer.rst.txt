@@ -1,0 +1,6 @@
+
+mixer.py
+========
+
+.. automodule:: imslib.mixer
+    :members:

@@ -1,0 +1,347 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>wavesrc.py &mdash; 21M.385 Common Library  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="writer.py" href="writer.html" />
+    <link rel="prev" title="wavegen.py" href="wavegen.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> 21M.385 Common Library
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="audio.html">audio.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clock.html">clock.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core.html">core.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gfxutil.html">gfxutil.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="keydisplay.html">keydisplay.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="leap.html">leap.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metro.html">metro.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mixer.html">mixer.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modifier.html">modifier.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="note.html">note.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="noteseq.html">noteseq.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="screen.html">screen.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="synth.html">synth.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wavegen.html">wavegen.py</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">wavesrc.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="writer.html">writer.py</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">21M.385 Common Library</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>wavesrc.py</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="module-imslib.wavesrc">
+<span id="wavesrc-py"></span><h1>wavesrc.py<a class="headerlink" href="#module-imslib.wavesrc" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="imslib.wavesrc.AudioRegion">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">imslib.wavesrc.</span></span><span class="sig-name descname"><span class="pre">AudioRegion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">len</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.wavesrc.AudioRegion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create new instance of AudioRegion(name, start, len)</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="imslib.wavesrc.AudioRegion.len">
+<span class="sig-name descname"><span class="pre">len</span></span><a class="headerlink" href="#imslib.wavesrc.AudioRegion.len" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="imslib.wavesrc.AudioRegion.name">
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#imslib.wavesrc.AudioRegion.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="imslib.wavesrc.AudioRegion.start">
+<span class="sig-name descname"><span class="pre">start</span></span><a class="headerlink" href="#imslib.wavesrc.AudioRegion.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="imslib.wavesrc.WaveBuffer">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">imslib.wavesrc.</span></span><span class="sig-name descname"><span class="pre">WaveBuffer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_frames</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.wavesrc.WaveBuffer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads certain data from a wave file and stores it in memory.</p>
+<p>This is a WaveSource – a wave data providing interface. Call <a class="reference internal" href="#imslib.wavesrc.WaveBuffer.get_frames" title="imslib.wavesrc.WaveBuffer.get_frames"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_frames()</span></code></a>
+to get audio data in the format we like <em>(numpy array, float32)</em>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filepath</strong> – The path to the wave file. Should be a 16 bit file with a sample rate of 44100Hz.</p></li>
+<li><p><strong>start_frame</strong> – The frame of the wave file that this buffer should start on.</p></li>
+<li><p><strong>end_frame</strong> – The frame of the wave file that this buffer should end on.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.wavesrc.WaveBuffer.get_frames">
+<span class="sig-name descname"><span class="pre">get_frames</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_frame</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.wavesrc.WaveBuffer.get_frames" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a range of frames of audio data from the wave buffer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start_frame</strong> – The frame of the wave buffer to start on.</p></li>
+<li><p><strong>end_frame</strong> – The frame of the wave buffer to end on.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A numpy array of audio data from <em>start_frame</em> to <em>end_frame</em> of the wave buffer.
+If more frames are asked for than are available, then returns what it can.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.wavesrc.WaveBuffer.get_num_channels">
+<span class="sig-name descname"><span class="pre">get_num_channels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#imslib.wavesrc.WaveBuffer.get_num_channels" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The number of channels of the loaded wave file.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="imslib.wavesrc.WaveFile">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">imslib.wavesrc.</span></span><span class="sig-name descname"><span class="pre">WaveFile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.wavesrc.WaveFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Interface for reading data from a wave file. Does not store this data locally.
+Simply call <cite>get_frames()</cite> to get data in format we like <em>(numpy array, float32)</em>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filepath</strong> – The path to the wave file. Should be a 16 bit file with a sample rate of 44100Hz.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.wavesrc.WaveFile.get_frames">
+<span class="sig-name descname"><span class="pre">get_frames</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_frame</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.wavesrc.WaveFile.get_frames" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a range of frames of audio data from the provided wavefile.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start_frame</strong> – The frame of the wave file to start on.</p></li>
+<li><p><strong>end_frame</strong> – The frame of the wave file to end on.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A numpy array of audio data from <em>start_frame</em> to <em>end_frame</em> of the wave file.
+If more frames are asked for than are available, then returns what it can.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.wavesrc.WaveFile.get_num_channels">
+<span class="sig-name descname"><span class="pre">get_num_channels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#imslib.wavesrc.WaveFile.get_num_channels" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The number of channels of the loaded wave file.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="imslib.wavesrc.make_wave_buffers">
+<span class="sig-prename descclassname"><span class="pre">imslib.wavesrc.</span></span><span class="sig-name descname"><span class="pre">make_wave_buffers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wave_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regions_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.wavesrc.make_wave_buffers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads from a regions file and a wave file to create one WaveBuffer per region.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wave_path</strong> – The path to the wave file.</p></li>
+<li><p><strong>regions_path</strong> – The path to the text file containing one region per line.
+Each line should contain the following, separated by tabs:
+start time (in seconds), index, length (in seconds), region name.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dictionary of WaveBuffers, keyed by region name.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="writer.html" class="btn btn-neutral float-right" title="writer.py" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="wavegen.html" class="btn btn-neutral float-left" title="wavegen.py" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Eran Egozy
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

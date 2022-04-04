@@ -1,0 +1,6 @@
+
+wavegen.py
+==========
+
+.. automodule:: imslib.wavegen
+    :members:

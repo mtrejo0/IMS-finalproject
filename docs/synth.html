@@ -1,0 +1,343 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>synth.py &mdash; 21M.385 Common Library  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="wavegen.py" href="wavegen.html" />
+    <link rel="prev" title="screen.py" href="screen.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> 21M.385 Common Library
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="audio.html">audio.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clock.html">clock.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core.html">core.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gfxutil.html">gfxutil.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="keydisplay.html">keydisplay.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="leap.html">leap.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metro.html">metro.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mixer.html">mixer.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modifier.html">modifier.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="note.html">note.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="noteseq.html">noteseq.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="screen.html">screen.py</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">synth.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wavegen.html">wavegen.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wavesrc.html">wavesrc.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="writer.html">writer.py</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">21M.385 Common Library</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>synth.py</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="module-imslib.synth">
+<span id="synth-py"></span><h1>synth.py<a class="headerlink" href="#module-imslib.synth" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="imslib.synth.Synth">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">imslib.synth.</span></span><span class="sig-name descname"><span class="pre">Synth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.synth.Synth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generator that creates sounds from a FluidSynth synthesizer bank.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filepath</strong> – Path to the file containing the synthesizer bank. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, Synth will load a locally cahced FluidR3_GM.sf2 file. If uncached, Synth will download FluidR3_GMsf2.</p></li>
+<li><p><strong>gain</strong> – The gain, a float between 0 and 1.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.synth.Synth.cc">
+<span class="sig-name descname"><span class="pre">cc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chan</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ctrl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.synth.Synth.cc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send control change value. The controls that are recognized
+are dependent on the SoundFont. 
+Typical values include -</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line">1 : vibrato</div>
+<div class="line">7 : volume</div>
+<div class="line">10 : pan (left to right)</div>
+<div class="line">11 : expression (soft to loud)</div>
+<div class="line">64 : sustain</div>
+<div class="line">91 : reverb</div>
+<div class="line">93 : chorus</div>
+</div>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>chan</strong> – The channel to use for audio playback.</p></li>
+<li><p><strong>ctrl</strong> – The control to modify, examples provided above.</p></li>
+<li><p><strong>val</strong> – The new value for the control. Always ranges 0 to 127.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.synth.Synth.generate">
+<span class="sig-name descname"><span class="pre">generate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_frames</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_channels</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.synth.Synth.generate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates and returns frames. Should be called every frame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>num_frames</strong> – An integer number of frames to generate.</p></li>
+<li><p><strong>num_channels</strong> – Number of channels. Can be 1 (mono) or 2 (stereo)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A tuple <code class="docutils literal notranslate"><span class="pre">(output,</span> <span class="pre">True)</span></code>. The output is a numpy array of length
+<strong>(num_frames * num_channels)</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.synth.Synth.noteoff">
+<span class="sig-name descname"><span class="pre">noteoff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chan</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.synth.Synth.noteoff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stops a note.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>chan</strong> – The channel on which the note should be stopped.</p></li>
+<li><p><strong>key</strong> – The key to stop.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.synth.Synth.noteon">
+<span class="sig-name descname"><span class="pre">noteon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chan</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vel</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.synth.Synth.noteon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plays a note.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>chan</strong> – The channel to use for audio playback.</p></li>
+<li><p><strong>key</strong> – The midi key to play.</p></li>
+<li><p><strong>vel</strong> – The velocity to play the note at – correlates with volume.
+Ranges from 0 to 127.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.synth.Synth.pitch_bend">
+<span class="sig-name descname"><span class="pre">pitch_bend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chan</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.synth.Synth.pitch_bend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adjust pitch of a playing channel by small amounts.
+A pitch bend value of 0 is no pitch change from default.
+A value of -2048 is 1 semitone down.
+A value of 2048 is 1 semitone up.
+Maximum values are -8192 to +8192 (transposing by 4 semitones).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>chan</strong> – The channel to use for audio playback.</p></li>
+<li><p><strong>val</strong> – The value to adjust pitch by, as specified above.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.synth.Synth.program">
+<span class="sig-name descname"><span class="pre">program</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chan</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bank</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preset</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.synth.Synth.program" title="Permalink to this definition">¶</a></dt>
+<dd><p>Essentially defines which instrument this generator’s synth uses.
+Specific <em>bank</em> and <em>preset</em> combinations can be used to switch between different instruments.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>chan</strong> – The channel to use for audio playback.</p></li>
+<li><p><strong>bank</strong> – The sound bank to use.</p></li>
+<li><p><strong>preset</strong> – The preset to use.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="wavegen.html" class="btn btn-neutral float-right" title="wavegen.py" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="screen.html" class="btn btn-neutral float-left" title="screen.py" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Eran Egozy
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

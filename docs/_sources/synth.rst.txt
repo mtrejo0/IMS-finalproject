@@ -1,0 +1,6 @@
+
+synth.py
+========
+
+.. automodule:: imslib.synth
+    :members:

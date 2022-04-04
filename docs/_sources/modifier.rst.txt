@@ -1,0 +1,6 @@
+
+modifier.py
+===========
+
+.. automodule:: imslib.modifier
+    :members:

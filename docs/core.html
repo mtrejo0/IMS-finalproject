@@ -1,0 +1,323 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>core.py &mdash; 21M.385 Common Library  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="gfxutil.py" href="gfxutil.html" />
+    <link rel="prev" title="clock.py" href="clock.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> 21M.385 Common Library
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="audio.html">audio.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clock.html">clock.py</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">core.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gfxutil.html">gfxutil.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="keydisplay.html">keydisplay.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="leap.html">leap.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metro.html">metro.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mixer.html">mixer.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modifier.html">modifier.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="note.html">note.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="noteseq.html">noteseq.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="screen.html">screen.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="synth.html">synth.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wavegen.html">wavegen.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wavesrc.html">wavesrc.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="writer.html">writer.py</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">21M.385 Common Library</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>core.py</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="module-imslib.core">
+<span id="core-py"></span><h1>core.py<a class="headerlink" href="#module-imslib.core" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="imslib.core.BaseWidget">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">imslib.core.</span></span><span class="sig-name descname"><span class="pre">BaseWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.core.BaseWidget" title="Permalink to this definition">¶</a></dt>
+<dd><p>A subclass of <cite>kivy.uix.widget.Widget</cite> that adds useful core functionality. To use, make your main app
+class a subclass of <cite>BaseWidget</cite>. You can define optional class methods (those beginning with <cite>on_</cite>) which 
+will get called based on particular events.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.core.BaseWidget.get_mouse_pos">
+<span class="sig-name descname"><span class="pre">get_mouse_pos</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#imslib.core.BaseWidget.get_mouse_pos" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the current mouse position as <code class="docutils literal notranslate"><span class="pre">[x,</span> <span class="pre">y]</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.core.BaseWidget.on_close">
+<span class="sig-name descname"><span class="pre">on_close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#imslib.core.BaseWidget.on_close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Override to get notified when window (and app) is about to close.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.core.BaseWidget.on_key_down">
+<span class="sig-name descname"><span class="pre">on_key_down</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keycode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modifiers</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.core.BaseWidget.on_key_down" title="Permalink to this definition">¶</a></dt>
+<dd><p>Override to receive keydown events.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>keycode</strong> – <code class="docutils literal notranslate"><span class="pre">[ascii-code,</span> <span class="pre">key]</span></code> ascii-code is an int, and key is a string. 
+Example: [49, ‘1’] when the 1 key is pressed.</p></li>
+<li><p><strong>modifiers</strong> – a list of held-down modifier keys, like ‘shift’, ‘ctrl’, ‘alt’, ‘meta’</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.core.BaseWidget.on_key_up">
+<span class="sig-name descname"><span class="pre">on_key_up</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keycode</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.core.BaseWidget.on_key_up" title="Permalink to this definition">¶</a></dt>
+<dd><p>Override to receive keyup events.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>keycode</strong> – <code class="docutils literal notranslate"><span class="pre">[ascii-code,</span> <span class="pre">key]</span></code> ascii-code is an int, and key is a string. 
+Example: [49, ‘1’] when the 1 key is released.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.core.BaseWidget.on_resize">
+<span class="sig-name descname"><span class="pre">on_resize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">win_size</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.core.BaseWidget.on_resize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Override to get notified when the main window just got resized.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>win_size</strong> – <code class="docutils literal notranslate"><span class="pre">[width,</span> <span class="pre">height]</span></code> - the new window size</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.core.BaseWidget.on_update">
+<span class="sig-name descname"><span class="pre">on_update</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#imslib.core.BaseWidget.on_update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Override to get called every graphics frame update, typically around 60 times per second.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="imslib.core.lookup">
+<span class="sig-prename descclassname"><span class="pre">imslib.core.</span></span><span class="sig-name descname"><span class="pre">lookup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.core.lookup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Look up a key in a list of keys, and returns the corresponding item from the values list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k</strong> – an item that should be found in the list <strong>keys</strong></p></li>
+<li><p><strong>keys</strong> – a list of items</p></li>
+<li><p><strong>values</strong> – the list of return values that correspond to the list of <strong>keys</strong>. The length of 
+<strong>values</strong> and <strong>keys</strong> is expected to be the same.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The <em>nth</em> item in <strong>values</strong> where <em>n</em> is the index of <strong>k</strong> in the list <strong>keys</strong>.</p>
+</dd>
+</dl>
+<p>Example: <code class="docutils literal notranslate"><span class="pre">lookup('s',</span> <span class="pre">'asdf',</span> <span class="pre">(4,5,6,7))</span></code> will return <code class="docutils literal notranslate"><span class="pre">5</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="imslib.core.run">
+<span class="sig-prename descclassname"><span class="pre">imslib.core.</span></span><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">widget</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fullscreen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.core.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to create the main widget and run the application.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>widget</strong> – the <cite>Widget</cite>-derived instance for the top-level / main Window.</p></li>
+<li><p><strong>pos</strong> – location of Window on the desktop (default = (0,0))</p></li>
+<li><p><strong>fullscreen</strong> – if <cite>True</cite>, will run the app in full-screen mode. Check <cite>Window.size</cite>
+to find the actual window size.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="gfxutil.html" class="btn btn-neutral float-right" title="gfxutil.py" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="clock.html" class="btn btn-neutral float-left" title="clock.py" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Eran Egozy
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

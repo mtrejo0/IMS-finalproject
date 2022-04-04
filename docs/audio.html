@@ -1,0 +1,322 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>audio.py &mdash; 21M.385 Common Library  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="clock.py" href="clock.html" />
+    <link rel="prev" title="21M.385 Common Framework Documentation" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> 21M.385 Common Library
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">audio.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clock.html">clock.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core.html">core.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gfxutil.html">gfxutil.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="keydisplay.html">keydisplay.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="leap.html">leap.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metro.html">metro.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mixer.html">mixer.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modifier.html">modifier.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="note.html">note.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="noteseq.html">noteseq.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="screen.html">screen.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="synth.html">synth.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wavegen.html">wavegen.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wavesrc.html">wavesrc.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="writer.html">writer.py</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">21M.385 Common Library</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>audio.py</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="module-imslib.audio">
+<span id="audio-py"></span><h1>audio.py<a class="headerlink" href="#module-imslib.audio" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="imslib.audio.Audio">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">imslib.audio.</span></span><span class="sig-name descname"><span class="pre">Audio</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_input_channels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.audio.Audio" title="Permalink to this definition">¶</a></dt>
+<dd><p>Audio input and output stream manager. Only one <cite>Audio</cite> object should be created. Audio output
+(sent to speakers) is supplied by setting an audio Generator class. Audio input (from microphone) is
+provided via a callback function. You can also “tap into” the output audio using a callback.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>num_channels</strong> – Number of output channels. Can be 1 (mono) or 2 (stereo)</p></li>
+<li><p><strong>input_func</strong> – if provided, input streaming is enabled, and function will be called when
+input data is available with parameters <code class="docutils literal notranslate"><span class="pre">(audio,</span> <span class="pre">num_channels)</span></code></p></li>
+<li><p><strong>num_input_channels</strong> – stream 1 (mono) or 2 (stereo) input channels. Note that some devices
+may not support stereo input.</p></li>
+</ul>
+</dd>
+</dl>
+<p>The following parameters are class-parameters and can be set before creating the Audio class:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Audio.sample_rate</strong> – Audio sample rate to use. Defaults to 44100.</p></li>
+<li><p><strong>Audio.buffer_size</strong> – Internal buffer size. A smaller buffer will lower latency, at the risk of buffer underrun.
+Default is 512.</p></li>
+<li><p><strong>Audio.out_dev</strong> – Can specify a non-default audio output device (via integer index).
+See <a class="reference internal" href="#imslib.audio.print_audio_devices" title="imslib.audio.print_audio_devices"><code class="xref py py-meth docutils literal notranslate"><span class="pre">print_audio_devices()</span></code></a>. Default is None, which chooses the default output device.</p></li>
+<li><p><strong>Audio.in_dev</strong> – Can specify a non-default audio input device (via integer index).
+See <a class="reference internal" href="#imslib.audio.print_audio_devices" title="imslib.audio.print_audio_devices"><code class="xref py py-meth docutils literal notranslate"><span class="pre">print_audio_devices()</span></code></a>. Default is None, which chooses the default input device.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>On Windows, if ASIO drivers are installed, you can run the whole python app with
+command-line-args <cite>-asio</cite>. That will cause ASIO drivers to be used instead of the default in/out
+devices. ASIO typically has much lower latency than the built-in Windows drivers.</p>
+<p>Example: <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">myapp.py</span> <span class="pre">-asio</span></code></p>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.audio.Audio.add_listen_func">
+<span class="sig-name descname"><span class="pre">add_listen_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fn</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.audio.Audio.add_listen_func" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a listener function to Audio. When a buffer of audio is generated and about to be sent to
+the speaker, that audio will also be sent to the given function by calling <code class="docutils literal notranslate"><span class="pre">fn(data,</span> <span class="pre">num_channels)</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>fn</strong> – A function to be called when a buffer of audio is generated.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.audio.Audio.get_cpu_load">
+<span class="sig-name descname"><span class="pre">get_cpu_load</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#imslib.audio.Audio.get_cpu_load" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Time spent (in milliseconds) processing audio input and output.
+Returned value is smoothed out somewhat. If value is too high (above 16ms), then too much time
+is being spent calculating audio.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.audio.Audio.on_update">
+<span class="sig-name descname"><span class="pre">on_update</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#imslib.audio.Audio.on_update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Must be called by the app (<cite>MainWidget</cite>) very often - usually 60 times per second. Typically,
+Audio.on_update() should be called from MainWidget.on_update().</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.audio.Audio.set_generator">
+<span class="sig-name descname"><span class="pre">set_generator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gen</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.audio.Audio.set_generator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets a Generator object that must supply audio data to Audio. Generator must define the
+method <code class="docutils literal notranslate"><span class="pre">generate(num_frames,</span> <span class="pre">num_channels)</span></code>, which returns a numpy array of
+length <em>(num_frames * num_channels)</em>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>gen</strong> – The generator object. May be <cite>None</cite>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="imslib.audio.get_audio_devices">
+<span class="sig-prename descclassname"><span class="pre">imslib.audio.</span></span><span class="sig-name descname"><span class="pre">get_audio_devices</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#imslib.audio.get_audio_devices" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Available input and output devices as <cite>{ ‘input’: &lt;list&gt;, ‘output’: &lt;list&gt; }</cite>.
+<cite>&lt;list&gt;</cite> is a list of device descriptors, each being a dictionary:
+<cite>{‘index’: &lt;integer&gt;, ‘name’: &lt;string&gt;, ‘latency’: (low, high), ‘channels’: &lt;max # of channels&gt;</cite>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="imslib.audio.print_audio_devices">
+<span class="sig-prename descclassname"><span class="pre">imslib.audio.</span></span><span class="sig-name descname"><span class="pre">print_audio_devices</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#imslib.audio.print_audio_devices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints the list of accessible input and output audio devices. This easiest way to see
+these results is to run <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">audio.py</span></code>, which just calls this function.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="clock.html" class="btn btn-neutral float-right" title="clock.py" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral float-left" title="21M.385 Common Framework Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Eran Egozy
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

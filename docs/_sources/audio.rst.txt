@@ -1,0 +1,6 @@
+
+audio.py
+========
+
+.. automodule:: imslib.audio
+    :members:

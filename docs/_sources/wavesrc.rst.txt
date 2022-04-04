@@ -1,0 +1,6 @@
+
+wavesrc.py
+==========
+
+.. automodule:: imslib.wavesrc
+    :members:

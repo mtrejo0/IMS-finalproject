@@ -1,0 +1,6 @@
+
+writer.py
+=========
+
+.. automodule:: imslib.writer
+    :members:

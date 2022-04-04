@@ -1,0 +1,6 @@
+
+noteseq.py
+==========
+
+.. automodule:: imslib.noteseq
+    :members:

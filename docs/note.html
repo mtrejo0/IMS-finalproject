@@ -1,0 +1,319 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>note.py &mdash; 21M.385 Common Library  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="noteseq.py" href="noteseq.html" />
+    <link rel="prev" title="modifier.py" href="modifier.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> 21M.385 Common Library
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="audio.html">audio.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clock.html">clock.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core.html">core.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gfxutil.html">gfxutil.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="keydisplay.html">keydisplay.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="leap.html">leap.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metro.html">metro.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mixer.html">mixer.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modifier.html">modifier.py</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">note.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="noteseq.html">noteseq.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="screen.html">screen.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="synth.html">synth.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wavegen.html">wavegen.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wavesrc.html">wavesrc.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="writer.html">writer.py</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">21M.385 Common Library</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>note.py</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="module-imslib.note">
+<span id="note-py"></span><h1>note.py<a class="headerlink" href="#module-imslib.note" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="imslib.note.Envelope">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">imslib.note.</span></span><span class="sig-name descname"><span class="pre">Envelope</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">generator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attack_time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decay_time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.note.Envelope" title="Permalink to this definition">¶</a></dt>
+<dd><p>Modifies frames from another generator to fade in and out nicely.
+Total duration is <em>attack_time + decay_time</em>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>generator</strong> – A generator object. Generator must define the method
+<code class="docutils literal notranslate"><span class="pre">generate(num_frames,</span> <span class="pre">num_channels)</span></code>, which returns a tuple
+<code class="docutils literal notranslate"><span class="pre">(signal,</span> <span class="pre">continue_flag)</span></code>. The signal must be a numpy array of
+length <em>(num_frames * num_channels)</em>.</p></li>
+<li><p><strong>attack_time</strong> – The duration of attack time, in seconds.</p></li>
+<li><p><strong>n1</strong> – The time constant of the attack function. Values farther from 1.0 are more sharply curved.</p></li>
+<li><p><strong>decay_time</strong> – The duration of decay time, in seconds.</p></li>
+<li><p><strong>n2</strong> – The time constant of the decay function. Values farther from 1.0 are more sharply curved.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.note.Envelope.generate">
+<span class="sig-name descname"><span class="pre">generate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_frames</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_channels</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.note.Envelope.generate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Should be called on every update. Shapes the amplitude of generated audio with
+a gain envelope.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>num_frames</strong> – An integer number of frames to generate.</p></li>
+<li><p><strong>num_channels</strong> – Number of channels. Can be 1 (mono) or 2 (stereo)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A tuple <code class="docutils literal notranslate"><span class="pre">(output,</span> <span class="pre">continue_flag)</span></code>. The output is the result of combining
+the envelope and the waveform from the generator specified on initialization.
+The continue_flag is <code class="docutils literal notranslate"><span class="pre">False</span></code> if the envelope has ended, and <code class="docutils literal notranslate"><span class="pre">True</span></code> otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="imslib.note.NoteGenerator">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">imslib.note.</span></span><span class="sig-name descname"><span class="pre">NoteGenerator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pitch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gain</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timbre</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sine'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.note.NoteGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates repeating waveforms to create constant tones/notes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pitch</strong> – The MIDI pitch of the note to be generated.</p></li>
+<li><p><strong>gain</strong> – The gain/volume of the note.</p></li>
+<li><p><strong>timbre</strong> – Specifies the geometric waveform used to generate the note,
+and allows the production of different timbres, or sound qualities.
+Can be set to one of the following: <code class="docutils literal notranslate"><span class="pre">sine</span></code>, <code class="docutils literal notranslate"><span class="pre">square</span></code>, <code class="docutils literal notranslate"><span class="pre">sawtooth</span></code>, or <code class="docutils literal notranslate"><span class="pre">triangle</span></code>.
+Defaults to <code class="docutils literal notranslate"><span class="pre">sine</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.note.NoteGenerator.generate">
+<span class="sig-name descname"><span class="pre">generate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_frames</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_channels</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.note.NoteGenerator.generate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Should be called on every update. Generates Note output.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>num_frames</strong> – An integer number of frames to generate.</p></li>
+<li><p><strong>num_channels</strong> – Number of channels. Can be 1 (mono) or 2 (stereo)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A tuple <code class="docutils literal notranslate"><span class="pre">(output,</span> <span class="pre">continue_flag)</span></code>. The output is the waveform
+that has the pitch, gain, and waveform specified during initialization.
+The continue_flag is <code class="docutils literal notranslate"><span class="pre">True</span></code> if the note is still playing, and <code class="docutils literal notranslate"><span class="pre">False</span></code>
+if <a class="reference internal" href="#imslib.note.NoteGenerator.note_off" title="imslib.note.NoteGenerator.note_off"><code class="xref py py-meth docutils literal notranslate"><span class="pre">note_off()</span></code></a> has been called.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="imslib.note.NoteGenerator.note_off">
+<span class="sig-name descname"><span class="pre">note_off</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#imslib.note.NoteGenerator.note_off" title="Permalink to this definition">¶</a></dt>
+<dd><p>Halts tone generation.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="imslib.note.midi_to_frequency">
+<span class="sig-prename descclassname"><span class="pre">imslib.note.</span></span><span class="sig-name descname"><span class="pre">midi_to_frequency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#imslib.note.midi_to_frequency" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts MIDI pitch (parameter <cite>n</cite>) to frequency in Hz.
+Example: <em>A440</em> = MIDI note <em>69</em>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>n</strong> – The MIDI pitch of the note.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The frequency in Hz correspnding to the MIDI pitch.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="noteseq.html" class="btn btn-neutral float-right" title="noteseq.py" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="modifier.html" class="btn btn-neutral float-left" title="modifier.py" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Eran Egozy
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
