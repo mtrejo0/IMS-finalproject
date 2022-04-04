@@ -1,6 +1,3 @@
-#pset6.py
-
-
 from re import L, S
 import sys, os
 from tkinter import Button
@@ -24,25 +21,24 @@ from imslib.gfxutil import topleft_label, CEllipse, CRectangle, CLabelRect
 from random import choice, randint
 
 
-
 # configuration parameters:
-nowbar_h = 0.2        # height of nowbar from the bottom of screen (as proportion of window height)
-nowbar_w_margin = 0.1 # margin on either side of the nowbar (as proportion of window width)
+nowbar_w = 0.1        # height of nowbar from the bottom of screen (as proportion of window height)
+nowbar_h_margin = 0.1 # margin on either side of the nowbar (as proportion of window width)
 time_span = 2.0       # time (in seconds) that spans the full vertical height of the Window
 beat_marker_len = 0.2 # horizontal length of beat marker (as a proportion of window width)
 px = metrics.dp(1) 
 
-# convert a time value to a y-pixel value (where time==0 is on the nowbar)
-def time_to_ypos(time):
-    now_y = Window.height * nowbar_h
-    return (Window.height)/time_span * time + now_y
+def time_to_xpos(time):
+    now_x = Window.width * nowbar_w
+    return (Window.width)/time_span * time + now_x
 
-def get_lane_x(lane):
-    ww = Window.width
 
-    margin = beat_marker_len * ww / 6 * 2
+def get_lane_y(lane):
+    wh = Window.height
 
-    origin = ww/2 - ww * beat_marker_len
+    margin = beat_marker_len * wh / 6 * 2
+
+    origin = wh/2 - wh * beat_marker_len
 
     return origin + (lane+1) * margin
 
@@ -83,13 +79,12 @@ class MainWidget(BaseWidget):
         # button down
         button_idx = lookup(keycode[1], '12345', (0,1,2,3,4))
         if button_idx != None:
-            print('down', button_idx)
             self.player.on_button_down(button_idx)
 
-        if keycode[1] == 'left':
+        if keycode[1] == 'down':
             self.player.on_button_action_down(keycode[1])
 
-        if keycode[1] == 'right':
+        if keycode[1] == 'up':
             self.player.on_button_action_down(keycode[1])
         
         if keycode[1] == 'spacebar':
@@ -181,7 +176,6 @@ class AudioController(object):
 
 # for parsing gem text file: return (time, lane) from a single line of text
 def beat_from_line(line):
-    print(line)
     time, beat = line.strip().split('\t')
     return (float(time), beat)
 
@@ -233,8 +227,8 @@ class GemDisplay(InstructionGroup):
         self.color = Color(1,1,1)
         self.add(self.color)
         
-        y = 0
-        x = get_lane_x(self.lane)
+        y = get_lane_y(self.lane)
+        x = 0
 
         pos = (x,y)
         img = choice(['../data/piano.png', '../data/sax.png', '../data/drums.png'])
@@ -256,23 +250,17 @@ class GemDisplay(InstructionGroup):
 
     # animate gem (position and animation) based on current time
     def on_update(self, now_time):
-
-
-        ypos = time_to_ypos(self.time-now_time)
-
-        x,_ = self.gem.cpos
-        self.gem.cpos = x,ypos
-
-        return ypos > 0 and ypos < Window.height
-
-    def on_resize(self,win_size):
+        xpos = time_to_xpos(self.time-now_time)
 
         _,y = self.gem.cpos
-        x = get_lane_x(self.lane)
+        self.gem.cpos = xpos,y
 
-        
+        return xpos > 0 and xpos < Window.width
+
+    def on_resize(self,win_size):
+        x,_ = self.gem.cpos
+        y = get_lane_y(self.lane)
         pos = (x,y)
-
         self.gem.cpos = pos
 
 
@@ -294,13 +282,14 @@ class BarlineDisplay(InstructionGroup):
     # and is an absolute time position (not a delta time)
     def on_update(self, now_time):
 
-        ypos = time_to_ypos(self.time-now_time)
-        x_left = Window.width /2 - beat_marker_len * Window.width
-        x_right = Window.width /2 + beat_marker_len * Window.width
 
-        self.line.points = [x_left, ypos, x_right, ypos]
+        xpos = time_to_xpos(self.time-now_time)
+        y_top = Window.height /2 - beat_marker_len * Window.height
+        y_bottom = Window.height /2 + beat_marker_len * Window.height
 
-        return ypos > 0 and ypos < Window.height
+        self.line.points = [xpos, y_top, xpos, y_bottom]
+
+        return xpos > 0 and xpos < Window.width
 
 # Displays one button on the nowbar
 class ButtonDisplay(InstructionGroup):
@@ -308,8 +297,10 @@ class ButtonDisplay(InstructionGroup):
         super(ButtonDisplay, self).__init__()
         self.lane = lane
 
-        x = get_lane_x(self.lane)
-        y = nowbar_h* Window.height
+        x = nowbar_w* Window.width
+        y = get_lane_y(self.lane)
+
+
         pos = (x,y)
 
         self.color = Color(1,1,1)
@@ -320,7 +311,7 @@ class ButtonDisplay(InstructionGroup):
 
         self.add(self.button)
         
-        self.line = Line(points = [x,Window.height,x,0])
+        self.line = Line(points = [Window.width,y,0,y])
         self.add(self.line)
 
 
@@ -335,14 +326,14 @@ class ButtonDisplay(InstructionGroup):
     # modify object positions based on new window size
     def on_resize(self, win_size):
 
-        x = get_lane_x(self.lane)
-        y = nowbar_h * Window.height
+        x = nowbar_w* Window.width
+        y = get_lane_y(self.lane)
 
         pos = (x,y)
 
         self.button.cpos = pos
 
-        self.line.points = [x,Window.height,x,0]
+        self.line.points = [Window.width,y,0,y]
 
 
 class Goat(InstructionGroup):
@@ -350,9 +341,8 @@ class Goat(InstructionGroup):
         super(Goat, self).__init__()
         self.lane = 0
 
-        
-        x = get_lane_x(self.lane)
-        y = nowbar_h* Window.height
+        x = nowbar_w* Window.width
+        y = get_lane_y(self.lane)
 
         self.color = Color(1,1,1)
         self.add(self.color)
@@ -362,17 +352,17 @@ class Goat(InstructionGroup):
 
 
     def on_update(self):
-        x = get_lane_x(self.lane)
-        y = nowbar_h* Window.height
+        x = nowbar_w* Window.width
+        y = get_lane_y(self.lane)
         self.avatar.cpos = (x,y)
     
 
     def on_button_down(self, keycode):
-        if keycode == "left":
+        if keycode == "down":
             self.lane -= 1
             self.lane = max(0, self.lane)
 
-        if keycode == "right":
+        if keycode == "up":
 
             self.lane += 1
             self.lane = min(4, self.lane)
@@ -405,10 +395,11 @@ class GameDisplay(InstructionGroup):
             self.add(b)
 
         color = Color(1, 1, 1) # color of this beat line
-        left_coord = [nowbar_w_margin*Window.width,nowbar_h* Window.height]
-        right_coord = [Window.width - nowbar_w_margin*Window.width,nowbar_h* Window.height]
+
+        top_coord = [nowbar_w* Window.width, Window.height - nowbar_h_margin*Window.height]
+        bottom_coord = [nowbar_w* Window.width,nowbar_h_margin*Window.height]
         
-        self.now_bar = Line(points=left_coord+right_coord, width = 3) # line object to be drawn / animated in on_update()
+        self.now_bar = Line(points=top_coord+bottom_coord, width = 3) # line object to be drawn / animated in on_update()
         
         self.add(color)
         self.add(self.now_bar)
@@ -426,18 +417,14 @@ class GameDisplay(InstructionGroup):
         self.add(self.goat)
 
 
-        # test: print first 4 beat locations:
-        print('Window size is:', Window.size)
-        for b in self.beat_data[:4]:
-            t = b[0]
-            y = time_to_ypos(t)
-            print(f'time:{t:.3f}, y-pixel:{y:.0f}')
 
     # when the window size changes:
     def on_resize(self, win_size):
-        left_coord = [nowbar_w_margin*Window.width,nowbar_h* Window.height]
-        right_coord = [Window.width - nowbar_w_margin*Window.width,nowbar_h* Window.height]
-        self.now_bar.points=left_coord+right_coord
+        top_coord = [nowbar_w* Window.width, Window.height - nowbar_h_margin*Window.height]
+        bottom_coord = [nowbar_w* Window.width,nowbar_h_margin*Window.height]
+    
+        
+        self.now_bar.points=top_coord+bottom_coord
 
         for each in self.beats:
             each.on_resize(win_size)
@@ -491,25 +478,14 @@ class GameDisplay(InstructionGroup):
             if each in self.beats and each.lane == lane:
                 button = self.buttons[lane]
 
-                _,button_y = button.button.cpos
+                button_x,_ = button.button.cpos
 
-                _,gem_y = each.gem.cpos
+                gem_x,_ = each.gem.cpos
 
-                if abs(gem_y - button_y) < 50:
+                if abs(gem_x - button_x) < 50:
                     each.on_hit()
                     return True
         
-        for each in self.children:
-            if each in self.beats and each.lane == lane:
-                button = self.buttons[lane]
-
-                _,button_y = button.button.cpos
-
-                _,gem_y = each.gem.cpos
-
-                if abs(gem_y - button_y) < 50:
-                    each.on_hit()
-                    return True
 
         
         return False
@@ -569,11 +545,11 @@ class Player(object):
             if each in self.display.beats:
                 button = self.display.buttons[each.lane]
 
-                _,button_y = button.button.cpos
+                button_x,_ = button.button.cpos
 
-                _,gem_y = each.gem.cpos
+                gem_x,_ = each.gem.cpos
 
-                if button_y - gem_y > 50 and each.hit == False:
+                if button_x - gem_x > 50 and each.hit == False:
                     each.on_pass()
                     self.audio_ctrl.play_miss()
 
