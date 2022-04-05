@@ -345,6 +345,7 @@ class ButtonDisplay(InstructionGroup):
         self.button.cpos = pos
 
         self.line.points = [Window.width,y,Window.width*nowbar_w,y]
+        self.line2.points = [Window.width,y,Window.width*nowbar_w,y]
 
 
 class Goat(InstructionGroup):
@@ -436,7 +437,6 @@ class GameDisplay(InstructionGroup):
     # when the window size changes:
     def on_resize(self, win_size):
         
-        print("ok")
         for each in self.beats:
             each.on_resize(win_size)
 
