@@ -18,7 +18,7 @@ from kivy.core.image import Image
 
 from imslib.gfxutil import topleft_label, CEllipse, CRectangle, CLabelRect
 
-from random import choice, randint
+from random import choice, randint, random
 
 
 # configuration parameters:
@@ -36,9 +36,9 @@ def time_to_xpos(time):
 def get_lane_y(lane):
     wh = Window.height
 
-    margin = beat_marker_len * wh / 6 * 2
+    margin = wh / 6
 
-    origin = wh/2 - wh * beat_marker_len
+    origin = 0
 
     return origin + (lane+1) * margin
 
@@ -238,6 +238,7 @@ class GemDisplay(InstructionGroup):
         self.add(self.gem)
         self.hit = False
 
+
     # change to display this gem being hit
     def on_hit(self):
         self.color.rgb = (0,0,0)
@@ -273,7 +274,7 @@ class BarlineDisplay(InstructionGroup):
 
         self.time = time  # the timestamp (in seconds) of this beat in the song (ie, when does this beat occur?)
         self.color = Color(hsv=(.1, .8, 1)) # color of this beat line
-        self.line = Line(width = 3) # line object to be drawn / animated in on_update()
+        self.line = Line(width = 1) # line object to be drawn / animated in on_update()
 
         self.add(self.color)
         self.add(self.line)
@@ -284,10 +285,8 @@ class BarlineDisplay(InstructionGroup):
 
 
         xpos = time_to_xpos(self.time-now_time)
-        y_top = Window.height /2 - beat_marker_len * Window.height
-        y_bottom = Window.height /2 + beat_marker_len * Window.height
 
-        self.line.points = [xpos, y_top, xpos, y_bottom]
+        self.line.points = [xpos, 0, xpos, Window.height]
 
         return xpos > 0 and xpos < Window.width
 
@@ -304,24 +303,36 @@ class ButtonDisplay(InstructionGroup):
         pos = (x,y)
 
         self.color = Color(1,1,1)
-        self.color.a = .5
+        self.color.a = 0
         self.add(self.color)
 
         self.button = CRectangle(cpos=pos, csize=(50,50))
 
         self.add(self.button)
         
-        self.line = Line(points = [Window.width,y,0,y])
+        self.linecolor = Color(1,0,0)
+        self.linecolor.a = 0
+        self.add(self.linecolor)
+        self.line = Line(points = [Window.width,y,Window.width*nowbar_w,y], width = 3)
         self.add(self.line)
+
+
+        self.linecolor2 = Color(1,1,1)
+        self.linecolor2.a = 0
+        self.add(self.linecolor2)
+        self.line2 = Line(points = [Window.width,y,Window.width*nowbar_w,y], width = 1.5)
+        self.add(self.line2)
 
 
     # displays when button is pressed down
     def on_down(self):
-        self.color.a = 1
+        self.linecolor.a = 1
+        self.linecolor2.a = 1
 
     # back to normal state
     def on_up(self):
-        self.color.a = .5
+        self.linecolor.a = 0
+        self.linecolor2.a = 0
 
     # modify object positions based on new window size
     def on_resize(self, win_size):
@@ -333,7 +344,7 @@ class ButtonDisplay(InstructionGroup):
 
         self.button.cpos = pos
 
-        self.line.points = [Window.width,y,0,y]
+        self.line.points = [Window.width,y,Window.width*nowbar_w,y]
 
 
 class Goat(InstructionGroup):
@@ -367,12 +378,10 @@ class Goat(InstructionGroup):
             self.lane += 1
             self.lane = min(4, self.lane)
 
-        if keycode == "spacebar":
-            self.color.rgb = (1,0,0)
 
     def on_button_up(self, keycode):
-        if keycode == "spacebar":
-            self.color.rgb = (1,1,1)
+
+        pass
 
         
 
@@ -380,6 +389,22 @@ class Goat(InstructionGroup):
 class GameDisplay(InstructionGroup):
     def __init__(self, song_data, barline_data):
         super(GameDisplay, self).__init__()
+
+
+        self.stars = []
+        for i in range(500):
+
+            color = Color(1,1,1)
+            color.a = random()
+            size = randint(0,3)
+            pos = (randint(0,Window.width), randint(0,Window.height))
+
+            star = CEllipse(cpos=pos, csize=(size*px, size*px))
+
+            self.add(color)
+            self.add(star)
+
+            self.stars.append([star, color.a])
 
 
         self.beat_data = song_data.get_beats()
@@ -394,15 +419,7 @@ class GameDisplay(InstructionGroup):
         for b in self.barlines:
             self.add(b)
 
-        color = Color(1, 1, 1) # color of this beat line
 
-        top_coord = [nowbar_w* Window.width, Window.height - nowbar_h_margin*Window.height]
-        bottom_coord = [nowbar_w* Window.width,nowbar_h_margin*Window.height]
-        
-        self.now_bar = Line(points=top_coord+bottom_coord, width = 3) # line object to be drawn / animated in on_update()
-        
-        self.add(color)
-        self.add(self.now_bar)
 
         self.buttons = []
 
@@ -416,21 +433,19 @@ class GameDisplay(InstructionGroup):
 
         self.add(self.goat)
 
-
-
     # when the window size changes:
     def on_resize(self, win_size):
-        top_coord = [nowbar_w* Window.width, Window.height - nowbar_h_margin*Window.height]
-        bottom_coord = [nowbar_w* Window.width,nowbar_h_margin*Window.height]
-    
         
-        self.now_bar.points=top_coord+bottom_coord
-
+        print("ok")
         for each in self.beats:
             each.on_resize(win_size)
 
         for each in self.buttons:
             each.on_resize(win_size)
+
+        for each in self.stars:
+            if random() < .2:
+                each[0].cpos = (randint(0,Window.width), randint(0,Window.height))
 
 
     def get_num_object(self):
@@ -459,6 +474,15 @@ class GameDisplay(InstructionGroup):
                 self.children.append(b)
 
         self.goat.on_update()
+
+        for each in self.stars:
+            x,y = each[0].cpos
+            x -= each[1]
+            each[0].cpos = x,y
+
+            if x < 0:
+                each[0].cpos = (Window.width, randint(0,Window.height))
+            
         
 
 
@@ -522,7 +546,7 @@ class Player(object):
         
     # called by MainWidget
     def on_button_up(self, lane):
-        self.display.on_button_up(lane)
+        self.display.on_button_up()
 
     def on_button_action_down(self, keycode):
         self.display.goat.on_button_down(keycode)
@@ -537,6 +561,8 @@ class Player(object):
 
         if keycode == "spacebar":
             self.display.on_button_up(self.display.goat.lane)
+        for each in self.display.buttons:
+            each.on_up()
 
     # needed to check for pass gems (ie, went past the slop window)
     def on_update(self, time):
