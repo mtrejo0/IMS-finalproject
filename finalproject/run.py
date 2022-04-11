@@ -10,10 +10,12 @@ from imslib.wavegen import WaveGenerator
 from imslib.wavesrc import WaveBuffer, WaveFile
 
 from kivy.graphics.instructions import InstructionGroup
+from kivy.clock import Clock
 from kivy.graphics import Color, Ellipse, Line, Rectangle
 from kivy.core.window import Window
 from kivy import metrics
 from kivy.core.image import Image
+from kivy.properties import ObjectProperty, ListProperty
 
 
 from imslib.gfxutil import topleft_label, CEllipse, CRectangle, CLabelRect
@@ -45,8 +47,26 @@ def get_lane_y(lane):
 
 
 class MainWidget(BaseWidget):
+    # fire / trigger axis
+    FIRE = (2, 5)
+    STOP_FIRE = -32767
+
+    # min value for user to actually trigger axis
+    OFFSET = 15000
+
+    # current values + event instance
+    VALUES = ListProperty([])
+    HOLD = ObjectProperty(None)
+
     def __init__(self):
         super(MainWidget, self).__init__()
+
+        # bind all the controller input
+        Window.bind(on_joy_hat=self.on_joy_hat)
+        Window.bind(on_joy_ball=self.on_joy_ball)
+        Window.bind(on_joy_axis=self.on_joy_axis)
+        Window.bind(on_joy_button_up=self.on_joy_button_up)
+        Window.bind(on_joy_button_down=self.on_joy_button_down)
 
 
         gems_file = '../data/gems.txt'
@@ -61,49 +81,93 @@ class MainWidget(BaseWidget):
         self.barlines_data  = BarlineData(barlines_file)
         
 
-        self.display = GameDisplay(self.song_data, self.barlines_data)
+        self.display1 = GameDisplay(self.song_data, self.barlines_data)
+        self.display2 = GameDisplay(self.song_data, self.barlines_data)
 
-        self.canvas.add(self.display)
+        self.canvas.add(self.display1)
+        self.canvas.add(self.display2)
 
         self.info = topleft_label()
         self.add_widget(self.info)
 
 
-        self.player = Player(self.song_data, self.audio_ctrl, self.display)
+        self.player1 = Player(self.song_data, self.audio_ctrl, self.display1)
+        self.player2 = Player(self.song_data, self.audio_ctrl, self.display2)
+
+    # functions for reading gamepad inputs 
+    # show values in console
+    def print_values(self, *args):
+        print(self.VALUES)
+
+    def joy_motion(self, event, id, axis, value):
+        # HAT first, returns max values
+        if isinstance(value, tuple):
+            if not value[0] and not value[1]:
+                Clock.unschedule(self.HOLD)
+            else:
+                self.VALUES = [event, id, axis, value]
+                self.HOLD = Clock.schedule_interval(self.print_values, 0)
+            
+            return
+
+        # unschedule if at zero or at minimum (FIRE)
+        if axis in self.FIRE and value < self.STOP_FIRE:
+            Clock.unschedule(self.HOLD)
+            return
+        elif abs(value) < self.OFFSET or self.HOLD:
+            Clock.unschedule(self.HOLD)
+
+        # schedule if over OFFSET (to prevent accidental event with low value)
+        if (axis in self.FIRE and value > self.STOP_FIRE or
+                axis not in self.FIRE and abs(value) >= self.OFFSET):
+            self.VALUES = [event, id, axis, value]
+            self.HOLD = Clock.schedule_interval(self.print_values, 0)
+
+    # replace window instance with identifier
+    def on_joy_axis(self, win, stickid, axisid, value):
+        self.joy_motion('axis', stickid, axisid, value)
+        if value > 15000:
+            self.player1.on_button_action_down('down')
+        elif value < -15000:
+            self.player1.on_button_action_down('up')
+
+    def on_joy_ball(self, win, stickid, ballid, xvalue, yvalue):
+        self.joy_motion('ball', stickid, ballid, (xvalue, yvalue))
+
+    def on_joy_hat(self, win, stickid, hatid, value):
+        self.joy_motion('hat', stickid, hatid, value)
+
+    def on_joy_button_down(self, win, stickid, buttonid):
+        self.player1.on_button_action_down('spacebar')
+
+    def on_joy_button_up(self, win, stickid, buttonid):
+        self.player1.on_button_action_up('spacebar')
 
     def on_key_down(self, keycode, modifiers):
         # play / pause toggle
         if keycode[1] == 'p':
             self.audio_ctrl.toggle()
 
-        # button down
-        button_idx = lookup(keycode[1], '12345', (0,1,2,3,4))
-        if button_idx != None:
-            self.player.on_button_down(button_idx)
-
         if keycode[1] == 'down':
-            self.player.on_button_action_down(keycode[1])
+            self.player2.on_button_action_down(keycode[1])
 
         if keycode[1] == 'up':
-            self.player.on_button_action_down(keycode[1])
+            self.player2.on_button_action_down(keycode[1])
         
         if keycode[1] == 'spacebar':
-            self.player.on_button_action_down(keycode[1])
+            self.player2.on_button_action_down(keycode[1])
             
 
     def on_key_up(self, keycode):
         # button up
-        button_idx = lookup(keycode[1], '12345', (0,1,2,3,4))
-        if button_idx != None:
-            self.player.on_button_up(button_idx)
-
         if keycode[1] == 'spacebar':
-            self.player.on_button_action_up(keycode[1])
+            self.player2.on_button_action_up(keycode[1])
 
     # handle changing displayed elements when window size changes
     # This function should call GameDisplay.on_resize 
     def on_resize(self, win_size):
-        self.display.on_resize(win_size)
+        self.display1.on_resize(win_size)
+        self.display2.on_resize(win_size)
 		
     def on_update(self):
         self.audio_ctrl.on_update()
@@ -111,13 +175,16 @@ class MainWidget(BaseWidget):
         # Note that in this system, on_update() is called with the song's current time. It does
         # NOT use dt (delta time).
         now = self.audio_ctrl.get_time()  # time of song in seconds.
-        self.display.on_update(now)
+        self.display1.on_update(now)
+        self.display2.on_update(now)
 
-        self.player.on_update(now)
 
-        self.info.text = 'p: pause/unpause song\n'
-        self.info.text += f'song time: {now:.2f}\n'
-        self.info.text += f'Score: {self.player.score}\n'
+        self.player1.on_update(now)
+        self.player2.on_update(now)
+
+        # self.info.text = 'p: pause/unpause song\n'
+        # self.info.text += f'song time: {now:.2f}\n'
+        # self.info.text += f'Score: {self.player1.score}\n'
 
 
 # Handles everything about Audio.
@@ -133,9 +200,9 @@ class AudioController(object):
         self.audio.set_generator(self.mixer)
 
 
-        solo = f'../../GH Audio/{song_path}_solo'
+        solo = f'../data/{song_path}_solo'
 
-        bg = f'../../GH Audio/{song_path}_bg'
+        bg = f'../data/{song_path}_bg'
 
         # song
         self.track = WaveGenerator(WaveFile(solo + ".wav"))
