@@ -69,7 +69,7 @@ class MainWidget(BaseWidget):
         Window.bind(on_joy_button_down=self.on_joy_button_down)
 
 
-        gems_file = '../data/gems.txt'
+        gems_file = '../data/normal.txt'
 
         barlines_file = '../data/barline.txt'
 
@@ -81,17 +81,17 @@ class MainWidget(BaseWidget):
         self.barlines_data  = BarlineData(barlines_file)
         
 
-        self.display1 = GameDisplay(self.song_data, self.barlines_data)
+        # self.display1 = GameDisplay(self.song_data, self.barlines_data)
         self.display2 = GameDisplay(self.song_data, self.barlines_data)
 
-        self.canvas.add(self.display1)
+        # self.canvas.add(self.display1)
         self.canvas.add(self.display2)
 
         self.info = topleft_label()
         self.add_widget(self.info)
 
 
-        self.player1 = Player(self.song_data, self.audio_ctrl, self.display1)
+        # self.player1 = Player(self.song_data, self.audio_ctrl, self.display1)
         self.player2 = Player(self.song_data, self.audio_ctrl, self.display2)
 
     # functions for reading gamepad inputs 
@@ -166,7 +166,7 @@ class MainWidget(BaseWidget):
     # handle changing displayed elements when window size changes
     # This function should call GameDisplay.on_resize 
     def on_resize(self, win_size):
-        self.display1.on_resize(win_size)
+        # self.display1.on_resize(win_size)
         self.display2.on_resize(win_size)
 		
     def on_update(self):
@@ -175,16 +175,16 @@ class MainWidget(BaseWidget):
         # Note that in this system, on_update() is called with the song's current time. It does
         # NOT use dt (delta time).
         now = self.audio_ctrl.get_time()  # time of song in seconds.
-        self.display1.on_update(now)
+        # self.display1.on_update(now)
         self.display2.on_update(now)
 
 
-        self.player1.on_update(now)
+        # self.player1.on_update(now)
         self.player2.on_update(now)
 
-        # self.info.text = 'p: pause/unpause song\n'
-        # self.info.text += f'song time: {now:.2f}\n'
-        # self.info.text += f'Score: {self.player1.score}\n'
+        self.info.text = 'p: pause/unpause song\n'
+        self.info.text += f'song time: {now:.2f}\n'
+        self.info.text += f'Score: {self.player2.score}\n'
 
 
 # Handles everything about Audio.
@@ -488,7 +488,6 @@ class GameDisplay(InstructionGroup):
             self.add(b)
 
 
-
         self.buttons = []
 
         for i in range(5):
@@ -500,6 +499,17 @@ class GameDisplay(InstructionGroup):
         self.goat = Goat()
 
         self.add(self.goat)
+
+        self.state = "normal"
+
+        self.label = None
+        self.boss_count = 0
+
+        self.now_time = 0
+
+        self.add(Color(1,1,1))
+        self.boss = CRectangle(cpos=(10000,10000), csize=(100*px, 100*px), texture=Image('../data/dog.png').texture)
+        self.add(self.boss)
 
     # when the window size changes:
     def on_resize(self, win_size):
@@ -518,9 +528,77 @@ class GameDisplay(InstructionGroup):
     def get_num_object(self):
         return len(self.children)
 
+    
+    def remove_beats(self):
+        beats = self.beats.copy()
+        self.beats = []
+        for b in beats:
+            self.remove(b)
+            if b in self.children:
+                self.children.remove(b)
+    
+    def add_boss_beats(self):
+
+        self.beats = []
+        for b in self.beat_data:
+            time, lane = b
+            time = time + self.now_time
+
+            for i in range(5):
+                beat = GemDisplay(time, i)
+                self.beats.append(beat)
+
+    def add_normal_beats(self):
+
+        self.beats = []
+        for b in self.beat_data:
+            time, lane = b
+            time = time + self.now_time
+            beat = GemDisplay(time, lane)
+            self.beats.append(beat)
+
+    
+
+    def boss_incoming(self):
+        self.state = "boss_incoming"
+        self.remove_beats()
+        self.incoming_color = Color(1,0,0)
+        self.add(self.incoming_color)
+        self.label = CLabelRect(text="BOSS INCOMING", cpos=(Window.width/2,Window.height/2), font_size=21)
+        self.add(self.label)
+
+    def boss_start(self):
+        self.state = "boss"
+        self.remove(self.label)
+        self.add_boss_beats()
+
+    def boss_outgoing(self):
+        self.state = "boss_outgoing"
+        # remove boss
+        self.boss.set_cpos((10000,10000))
+
+        # remove boss gems
+        self.remove_beats()
+
+        self.end_color = Color(1,0,0)
+        self.add(self.incoming_color)
+
+        self.label = CLabelRect(text="BOSS DEAFEATED", cpos=(Window.width/2,Window.height/2), font_size=21)
+        self.add(self.label)
+
+    def boss_end(self):
+        self.remove(self.label)
+        self.add_normal_beats()
+        self.state = "normal"
+
+    
+
+
     # call every frame to handle animation needs. The value now_time is in seconds
     # and is an absolute time position (not a delta time)
     def on_update(self, now_time):
+
+        self.now_time = now_time
 
         beats = self.beats.copy()
         for b in beats:
@@ -550,7 +628,34 @@ class GameDisplay(InstructionGroup):
             if x < 0:
                 each[0].cpos = (Window.width, randint(0,Window.height))
             
+        if self.state == "boss_incoming":
+            
+            if self.boss_count % 10 == 0:
+                self.incoming_color.rgb = choice([(1,1,1), (1,0,0)])
+            
+            if self.boss_count > 300:
+                self.boss_start()
+                self.boss_count = 0
+            else:
+                self.boss_count += 1
+
+        if self.state == "boss_outgoing":
+            
+            if self.boss_count % 10 == 0:
+                self.incoming_color.rgb = choice([(1,1,1), (1,0,0)])
+            
+            if self.boss_count > 300:
+                self.boss_end()
+                self.boss_count = 0
+            else:
+                self.boss_count += 1
         
+        if self.state == "boss":
+            
+            # show the boss
+            self.boss.set_cpos((Window.width - Window.width/8,Window.height/2))
+
+
 
 
     # called by Player when succeeded in hitting this gem.
@@ -577,8 +682,6 @@ class GameDisplay(InstructionGroup):
                     each.on_hit()
                     return True
         
-
-        
         return False
 
 
@@ -602,7 +705,7 @@ class Player(object):
         self.audio_ctrl = audio_ctrl
         self.song_data = song_data
         self.score = 0
-
+        self.state = 'normal'
         
 
     # called by MainWidget
@@ -645,7 +748,17 @@ class Player(object):
                 if button_x - gem_x > 50 and each.hit == False:
                     each.on_pass()
                     self.audio_ctrl.play_miss()
+        
+        if self.display.state == "normal":
+            if self.score == 2:
+                self.display.boss_incoming()
+        
+        if self.display.state == "boss":
+            if self.score == 4:
+                self.score = 0
+                self.display.boss_outgoing()
 
+            
 
 if __name__ == "__main__":
     run(MainWidget())
