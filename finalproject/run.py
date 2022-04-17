@@ -69,11 +69,11 @@ class MainWidget(BaseWidget):
         Window.bind(on_joy_button_down=self.on_joy_button_down)
 
 
-        gems_file = '../data/normal.txt'
+        gems_file = '../data/starfox_melody_gems_firstdraft.txt'
 
         barlines_file = '../data/barline.txt'
 
-        base = "IronMan"
+        base = "corneria-2"
 
         self.song_data  = SongData(gems_file)
         self.audio_ctrl = AudioController(base)
@@ -200,29 +200,36 @@ class AudioController(object):
         self.audio.set_generator(self.mixer)
 
 
-        solo = f'../data/{song_path}_solo'
+        solo = f'../data/{song_path}-bass'
 
-        bg = f'../data/{song_path}_bg'
+        bg = f'../data/{song_path}-melody'
+
+        rest = f'../data/{song_path}-rest'
 
         # song
         self.track = WaveGenerator(WaveFile(solo + ".wav"))
 
         self.bg = WaveGenerator(WaveFile(bg + ".wav"))
 
+        self.rest = WaveGenerator(WaveFile(rest + ".wav"))
+
 
         self.mixer.add(self.track)
         self.mixer.add(self.bg)
+        self.mixer.add(self.rest)
 
         self.miss = WaveBuffer(f"../data/miss.wav", int(Audio.sample_rate * 0), int(Audio.sample_rate * .5))
 
         # start paused
         self.track.pause()
         self.bg.pause()
+        self.rest.pause()
 
     # start / stop the song
     def toggle(self):
         self.track.play_toggle()
         self.bg.play_toggle()
+        self.rest.play_toggle()
     # mute / unmute the solo track
     def set_mute(self, mute):
         pass
@@ -244,7 +251,7 @@ class AudioController(object):
 # for parsing gem text file: return (time, lane) from a single line of text
 def beat_from_line(line):
     time, beat = line.strip().split('\t')
-    return (float(time), beat)
+    return (float(time), int(beat) - 1)
 
 # Holds data beats
 class SongData(object):
@@ -538,13 +545,15 @@ class GameDisplay(InstructionGroup):
                 self.children.remove(b)
     
     def add_boss_beats(self):
-
         self.beats = []
         for b in self.beat_data:
             time, lane = b
             time = time + self.now_time
 
             for i in range(5):
+                if int(lane) == i:
+                    # skip the current songs
+                    continue
                 beat = GemDisplay(time, i)
                 self.beats.append(beat)
 
@@ -750,11 +759,11 @@ class Player(object):
                     self.audio_ctrl.play_miss()
         
         if self.display.state == "normal":
-            if self.score == 2:
+            if self.score == 20:
                 self.display.boss_incoming()
         
         if self.display.state == "boss":
-            if self.score == 4:
+            if self.score == 10:
                 self.score = 0
                 self.display.boss_outgoing()
 
