@@ -24,14 +24,15 @@ from random import choice, randint, random
 
 
 # configuration parameters:
-nowbar_w = 0.1        # height of nowbar from the bottom of screen (as proportion of window height)
+nowbar_w = 0.025        
+nowbar_laser = .15
 nowbar_h_margin = 0.1 # margin on either side of the nowbar (as proportion of window width)
 time_span = 2.0       # time (in seconds) that spans the full vertical height of the Window
 beat_marker_len = 0.2 # horizontal length of beat marker (as a proportion of window width)
 px = metrics.dp(1) 
 
 def time_to_xpos(time):
-    now_x = Window.width * nowbar_w
+    now_x = Window.width * nowbar_laser
     return (Window.width)/time_span * time + now_x
 
 
@@ -387,14 +388,14 @@ class ButtonDisplay(InstructionGroup):
         self.linecolor = Color(1,0,0)
         self.linecolor.a = 0
         self.add(self.linecolor)
-        self.line = Line(points = [Window.width,y,Window.width*nowbar_w,y], width = 3)
+        self.line = Line(points = [Window.width*nowbar_laser,y,Window.width*nowbar_w,y], width = 3)
         self.add(self.line)
 
 
         self.linecolor2 = Color(1,1,1)
         self.linecolor2.a = 0
         self.add(self.linecolor2)
-        self.line2 = Line(points = [Window.width,y,Window.width*nowbar_w,y], width = 1.5)
+        self.line2 = Line(points = [Window.width*nowbar_laser,y,Window.width*nowbar_w,y], width = 1.5)
         self.add(self.line2)
 
 
@@ -418,8 +419,8 @@ class ButtonDisplay(InstructionGroup):
 
         self.button.cpos = pos
 
-        self.line.points = [Window.width,y,Window.width*nowbar_w,y]
-        self.line2.points = [Window.width,y,Window.width*nowbar_w,y]
+        self.line.points = [Window.width*nowbar_laser,y,Window.width*nowbar_w,y]
+        self.line2.points = [Window.width*nowbar_laser,y,Window.width*nowbar_w,y]
 
 
 class Goat(InstructionGroup):
@@ -434,13 +435,30 @@ class Goat(InstructionGroup):
         self.add(self.color)
         self.avatar = CRectangle(cpos=(x,y), csize=(50*px, 50*px), texture=Image('../data/goat.png').texture)
 
+        
         self.add(self.avatar)
 
+        self.add(Color(1,0,0))
+        self.cross = CRectangle(cpos=(nowbar_laser* Window.width,Window.height/2), csize=(10*px, 10*px))
+
+        self.add(self.cross)
+
+        c = Color(1,1,1)
+        c.a = .1
+        self.add(c)
+
+        self.hotzone = CRectangle(cpos=(nowbar_laser* Window.width,Window.height/2), csize=(50*px, Window.height*px))
+        self.add(self.hotzone)
 
     def on_update(self):
         x = nowbar_w* Window.width
         y = get_lane_y(self.lane)
         self.avatar.cpos = (x,y)
+
+        self.cross.cpos = (nowbar_laser* Window.width,y)
+
+
+        self.hotzone.cpos = (nowbar_laser* Window.width,y)
     
 
     def on_button_down(self, keycode):
@@ -681,13 +699,10 @@ class GameDisplay(InstructionGroup):
 
         for each in self.children:
             if each in self.beats and each.lane == lane:
-                button = self.buttons[lane]
-
-                button_x,_ = button.button.cpos
 
                 gem_x,_ = each.gem.cpos
 
-                if abs(gem_x - button_x) < 50:
+                if abs(gem_x - Window.width*nowbar_laser) < 50:
                     each.on_hit()
                     return True
         
@@ -748,19 +763,16 @@ class Player(object):
 
         for each in self.display.children:
             if each in self.display.beats:
-                button = self.display.buttons[each.lane]
-
-                button_x,_ = button.button.cpos
-
                 gem_x,_ = each.gem.cpos
 
-                if button_x - gem_x > 50 and each.hit == False:
+                if Window.width*nowbar_laser - gem_x > 50 and each.hit == False:
                     each.on_pass()
                     self.audio_ctrl.play_miss()
         
         if self.display.state == "normal":
-            if self.score == 20:
+            if self.score == 10:
                 self.display.boss_incoming()
+                self.score = 0
         
         if self.display.state == "boss":
             if self.score == 10:
