@@ -462,7 +462,7 @@ class Goat(InstructionGroup):
         c.a = .1
         self.add(c)
 
-        self.hotzone = CRectangle(cpos=(nowbar_laser* Window.width,Window.height/2), csize=(50*px, Window.height*px))
+        self.hotzone = CRectangle(cpos=(nowbar_laser* Window.width,Window.height/2), csize=(50*px, Window.height*px*2))
         self.add(self.hotzone)
 
         self.move = "n"
