@@ -44,6 +44,11 @@ def get_lane_y(lane):
     origin = 0
 
     return origin + (lane+1) * margin
+def get_lane(y):
+    wh = Window.height
+    margin = wh/5
+
+    return int(y//margin)
 
 
 
@@ -82,17 +87,19 @@ class MainWidget(BaseWidget):
         self.barlines_data  = BarlineData(barlines_file)
         
 
-        # self.display1 = GameDisplay(self.song_data, self.barlines_data)
+        self.display1 = GameDisplay(self.song_data, self.barlines_data, self.audio_ctrl)
         self.display2 = GameDisplay(self.song_data, self.barlines_data, self.audio_ctrl)
-
-        # self.canvas.add(self.display1)
+        
+        self.canvas.add(self.display1)
         self.canvas.add(self.display2)
 
         self.info = topleft_label()
         self.add_widget(self.info)
 
+        # state varaible for movement
 
-        # self.player1 = Player(self.song_data, self.audio_ctrl, self.display1)
+
+        self.player1 = Player(self.song_data, self.audio_ctrl, self.display1)
         self.player2 = Player(self.song_data, self.audio_ctrl, self.display2)
 
     # functions for reading gamepad inputs 
@@ -112,8 +119,10 @@ class MainWidget(BaseWidget):
             return
 
         # unschedule if at zero or at minimum (FIRE)
-        if axis in self.FIRE and value < self.STOP_FIRE:
+        if axis in self.FIRE and value < self.STOP_FIRE or abs(value) < self.OFFSET:
             Clock.unschedule(self.HOLD)
+            self.player1.on_button_action_up('down')
+            self.player1.on_button_action_up('up')
             return
         elif abs(value) < self.OFFSET or self.HOLD:
             Clock.unschedule(self.HOLD)
@@ -123,14 +132,14 @@ class MainWidget(BaseWidget):
                 axis not in self.FIRE and abs(value) >= self.OFFSET):
             self.VALUES = [event, id, axis, value]
             self.HOLD = Clock.schedule_interval(self.print_values, 0)
+            if value > 15000:
+                self.player1.on_button_action_down('down')
+            elif value < -15000:
+                self.player1.on_button_action_down('up')
 
     # replace window instance with identifier
     def on_joy_axis(self, win, stickid, axisid, value):
         self.joy_motion('axis', stickid, axisid, value)
-        if value > 15000:
-            self.player1.on_button_action_down('down')
-        elif value < -15000:
-            self.player1.on_button_action_down('up')
 
     def on_joy_ball(self, win, stickid, ballid, xvalue, yvalue):
         self.joy_motion('ball', stickid, ballid, (xvalue, yvalue))
@@ -163,11 +172,15 @@ class MainWidget(BaseWidget):
         # button up
         if keycode[1] == 'spacebar':
             self.player2.on_button_action_up(keycode[1])
+        if keycode[1] == 'up':
+            self.player2.on_button_action_up(keycode[1])
+        if keycode[1] == 'down':
+            self.player2.on_button_action_up(keycode[1])
 
     # handle changing displayed elements when window size changes
     # This function should call GameDisplay.on_resize 
     def on_resize(self, win_size):
-        # self.display1.on_resize(win_size)
+        self.display1.on_resize(win_size)
         self.display2.on_resize(win_size)
 		
     def on_update(self):
@@ -176,11 +189,11 @@ class MainWidget(BaseWidget):
         # Note that in this system, on_update() is called with the song's current time. It does
         # NOT use dt (delta time).
         now = self.audio_ctrl.get_time()  # time of song in seconds.
-        # self.display1.on_update(now)
+        self.display1.on_update(now)
         self.display2.on_update(now)
 
 
-        # self.player1.on_update(now)
+        self.player1.on_update(now)
         self.player2.on_update(now)
 
         self.info.text = 'p: pause/unpause song\n'
@@ -407,12 +420,14 @@ class ButtonDisplay(InstructionGroup):
 
 
     # displays when button is pressed down
-    def on_down(self):
+    def on_down(self,y):
         self.linecolor.a = 1
         self.linecolor2.a = 1
+        self.line2.points = (Window.width*nowbar_laser,y,Window.width*nowbar_w,y)
+        self.line.points = (Window.width*nowbar_laser,y,Window.width*nowbar_w,y)
 
     # back to normal state
-    def on_up(self):
+    def on_up(self,):
         self.linecolor.a = 0
         self.linecolor2.a = 0
 
@@ -436,11 +451,11 @@ class Goat(InstructionGroup):
         self.lane = 0
 
         x = nowbar_w* Window.width
-        y = get_lane_y(self.lane)
+        self.y = Window.height/2
 
         self.color = Color(1,1,1)
         self.add(self.color)
-        self.avatar = CRectangle(cpos=(x,y), csize=(50*px, 50*px), texture=Image('../data/goat.png').texture)
+        self.avatar = CRectangle(cpos=(x,self.y), csize=(50*px, 50*px), texture=Image('../data/goat.png').texture)
 
         
         self.add(self.avatar)
@@ -457,31 +472,44 @@ class Goat(InstructionGroup):
         self.hotzone = CRectangle(cpos=(nowbar_laser* Window.width,Window.height/2), csize=(50*px, Window.height*px*2))
         self.add(self.hotzone)
 
+        self.move = "n"
+
     def on_update(self):
         x = nowbar_w* Window.width
-        y = get_lane_y(self.lane)
-        self.avatar.cpos = (x,y)
+        # move based on state
+        if self.move == "u":
+            self.y = self.y + 20
+        elif self.move == "d":
+            self.y = self.y-20
+        elif self.move == "n":
+            self.y = self.y
 
-        self.cross.cpos = (nowbar_laser* Window.width,y)
+        # loop around the screen
+        if self.y < 0:
+            self.y = Window.height
+        elif self.y > Window.height:
+            self.y = 0
 
+        # define the lane to hit the gem
+        self.lane = get_lane(self.y)
+        print(self.lane, self.y)
 
-        self.hotzone.cpos = (nowbar_laser* Window.width,y)
+        # set position of goat and target
+        self.avatar.cpos = (x,self.y)
+        self.cross.cpos = (nowbar_laser* Window.width,self.y)
+        self.hotzone.cpos = (nowbar_laser* Window.width,self.y)
     
 
     def on_button_down(self, keycode):
         if keycode == "down":
-            self.lane -= 1
-            self.lane = max(0, self.lane)
+            self.move = "d"
 
         if keycode == "up":
-
-            self.lane += 1
-            self.lane = min(4, self.lane)
+            self.move = "u"
 
 
     def on_button_up(self, keycode):
-
-        pass
+        self.move = "n"
 
         
 
@@ -707,8 +735,8 @@ class GameDisplay(InstructionGroup):
         pass
 
     # called by Player on button down
-    def on_button_down(self, lane):
-        self.buttons[lane].on_down()
+    def on_button_down(self, lane, y):
+        self.buttons[lane].on_down(y)
 
         for each in self.children:
             if each in self.beats and each.lane == lane:
@@ -765,7 +793,7 @@ class Player(object):
         self.display.goat.on_button_down(keycode)
 
         if keycode == "spacebar":
-            if self.display.on_button_down(self.display.goat.lane):
+            if self.display.on_button_down(self.display.goat.lane, self.display.goat.y):
                 self.audio_ctrl.track.set_gain(1)
                 self.score += 1
         
