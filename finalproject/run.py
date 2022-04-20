@@ -83,7 +83,7 @@ class MainWidget(BaseWidget):
         
 
         # self.display1 = GameDisplay(self.song_data, self.barlines_data)
-        self.display2 = GameDisplay(self.song_data, self.barlines_data)
+        self.display2 = GameDisplay(self.song_data, self.barlines_data, self.audio_ctrl)
 
         # self.canvas.add(self.display1)
         self.canvas.add(self.display2)
@@ -245,6 +245,12 @@ class AudioController(object):
         return self.track.frame/44100
 
     # needed to update audio
+    def reset(self):
+        self.track.reset()
+        self.bg.reset()
+        self.rest.reset()
+
+    # needed to update audio
     def on_update(self):
         self.audio.on_update()
 
@@ -322,7 +328,8 @@ class GemDisplay(InstructionGroup):
     # change to display a passed or missed gem
     def on_pass(self):
         self.color.rgb = (1,0,0)
-        self.color.a = .5
+        if self.color.a == 1:
+            self.color.a = .5
 
     # animate gem (position and animation) based on current time
     def on_update(self, now_time):
@@ -480,7 +487,7 @@ class Goat(InstructionGroup):
 
 
 class GameDisplay(InstructionGroup):
-    def __init__(self, song_data, barline_data):
+    def __init__(self, song_data, barline_data, audio_ctrl):
         super(GameDisplay, self).__init__()
 
 
@@ -536,6 +543,9 @@ class GameDisplay(InstructionGroup):
         self.boss = CRectangle(cpos=(10000,10000), csize=(100*px, 100*px), texture=Image('../data/dog.png').texture)
         self.add(self.boss)
 
+
+        self.audio_ctrl = audio_ctrl
+
     # when the window size changes:
     def on_resize(self, win_size):
         
@@ -566,11 +576,10 @@ class GameDisplay(InstructionGroup):
         self.beats = []
         for b in self.beat_data:
             time, lane = b
-            time = time + self.now_time
 
             for i in range(5):
                 if int(lane) == i:
-                    # skip the current songs
+                    # skip the current gem
                     continue
                 beat = GemDisplay(time, i)
                 self.beats.append(beat)
@@ -594,10 +603,14 @@ class GameDisplay(InstructionGroup):
         self.label = CLabelRect(text="BOSS INCOMING", cpos=(Window.width/2,Window.height/2), font_size=21)
         self.add(self.label)
 
+
     def boss_start(self):
         self.state = "boss"
         self.remove(self.label)
         self.add_boss_beats()
+
+        self.audio_ctrl.reset()
+        self.audio_ctrl.toggle()
 
     def boss_outgoing(self):
         self.state = "boss_outgoing"
@@ -704,6 +717,12 @@ class GameDisplay(InstructionGroup):
 
                 if abs(gem_x - Window.width*nowbar_laser) < 50:
                     each.on_hit()
+
+                    beats = self.beats
+                    for b in beats:
+                        if b.time == each.time:
+                            b.color.a = 0
+
                     return True
         
         return False
@@ -766,8 +785,9 @@ class Player(object):
                 gem_x,_ = each.gem.cpos
 
                 if Window.width*nowbar_laser - gem_x > 50 and each.hit == False:
-                    each.on_pass()
-                    self.audio_ctrl.play_miss()
+                    if each.color.a == 1:
+                        each.on_pass()
+                        self.audio_ctrl.play_miss()
         
         if self.display.state == "normal":
             if self.score == 10:
