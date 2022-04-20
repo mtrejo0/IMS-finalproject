@@ -98,8 +98,8 @@ class MainWidget(BaseWidget):
 
         # state varaible for movement
 
-        self.player1 = Player(self.song_data, self.audio_ctrl, self.display1, 1)
-        self.player2 = Player(self.song_data, self.audio_ctrl, self.display2, 2)
+        self.player1 = Player(self.song_data, self.audio_ctrl, self.display1, 1, self.boss_incoming, self.boss_outgoing, self.boss_flip)
+        self.player2 = Player(self.song_data, self.audio_ctrl, self.display2, 2, self.boss_incoming, self.boss_outgoing, self.boss_flip)
 
     # functions for reading gamepad inputs 
     # show values in console
@@ -199,6 +199,22 @@ class MainWidget(BaseWidget):
         self.info.text += f'song time: {now:.2f}\n'
         self.info.text += f'P1: {self.player1.score}\n'
         self.info.text += f'P2: {self.player2.score}\n'
+
+    def boss_incoming(self):
+        self.display1.remove_beats()
+        self.display2.boss_incoming()
+
+    def boss_flip(self):
+        if len(self.display1.beats):
+            self.display1.remove_beats()
+            self.display2.playback(self.display1.playback_gems)
+        else:
+            self.display1.playback(self.display2.playback_gems)
+            self.display2.remove_beats()
+
+    def boss_outgoing(self):
+        self.display1.boss_outgoing()
+        self.display2.boss_outgoing()
 
 
 # Handles everything about Audio.
@@ -593,6 +609,8 @@ class GameDisplay(InstructionGroup):
         for b in self.barlines:
             self.add(b)
 
+        self.playback_gems = []
+
     # when the window size changes:
     def on_resize(self, win_size):
         
@@ -678,8 +696,18 @@ class GameDisplay(InstructionGroup):
         self.add_normal_beats()
         self.state = "normal"
 
-    
+    def playback(self, beats):
 
+        self.state = "playback"
+
+        self.remove_beats()
+        self.audio_ctrl.reset()
+        self.audio_ctrl.toggle()
+        self.beats = []
+        for b in beats:
+            beat = GemDisplay(b.time, b.lane, self.id)
+            self.beats.append(beat)
+        
 
     # call every frame to handle animation needs. The value now_time is in seconds
     # and is an absolute time position (not a delta time)
@@ -769,7 +797,7 @@ class GameDisplay(InstructionGroup):
                     for b in beats:
                         if b.time == each.time:
                             b.color.a = 0
-
+                    self.playback_gems.append(each)
                     return True
         
         return False
@@ -788,7 +816,7 @@ class GameDisplay(InstructionGroup):
 # Handles game logic and keeps track of score.
 # Controls the GameDisplay and AudioCtrl based on what happens
 class Player(object):
-    def __init__(self, song_data, audio_ctrl, display, id):
+    def __init__(self, song_data, audio_ctrl, display, id, boss_incoming, boss_outgoing, boss_flip):
         super(Player, self).__init__()
 
         self.display = display
@@ -797,6 +825,9 @@ class Player(object):
         self.score = 0
         self.state = 'normal'
         self.id = id
+        self.boss_incoming = boss_incoming
+        self.boss_outgoing = boss_outgoing
+        self.boss_flip = boss_flip
         
 
     # called by MainWidget
@@ -838,14 +869,14 @@ class Player(object):
                         self.audio_ctrl.play_miss()
         
         if self.display.state == "normal":
-            if self.score == 10:
-                self.display.boss_incoming()
+            if self.score == 1:
+                self.boss_incoming()
                 self.score = 0
         
         if self.display.state == "boss":
             if self.score == 10:
                 self.score = 0
-                self.display.boss_outgoing()
+                self.boss_flip()
 
             
 
