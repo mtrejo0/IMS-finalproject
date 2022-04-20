@@ -87,8 +87,8 @@ class MainWidget(BaseWidget):
         self.barlines_data  = BarlineData(barlines_file)
         
 
-        self.display1 = GameDisplay(self.song_data, self.barlines_data, self.audio_ctrl)
-        self.display2 = GameDisplay(self.song_data, self.barlines_data, self.audio_ctrl)
+        self.display1 = GameDisplay(self.song_data, self.barlines_data, self.audio_ctrl, 1)
+        self.display2 = GameDisplay(self.song_data, self.barlines_data, self.audio_ctrl, 2)
         
         self.canvas.add(self.display1)
         self.canvas.add(self.display2)
@@ -98,9 +98,8 @@ class MainWidget(BaseWidget):
 
         # state varaible for movement
 
-
-        self.player1 = Player(self.song_data, self.audio_ctrl, self.display1)
-        self.player2 = Player(self.song_data, self.audio_ctrl, self.display2)
+        self.player1 = Player(self.song_data, self.audio_ctrl, self.display1, 1, self.boss_incoming, self.boss_outgoing, self.boss_flip)
+        self.player2 = Player(self.song_data, self.audio_ctrl, self.display2, 2, self.boss_incoming, self.boss_outgoing, self.boss_flip)
 
     # functions for reading gamepad inputs 
     # show values in console
@@ -198,7 +197,24 @@ class MainWidget(BaseWidget):
 
         self.info.text = 'p: pause/unpause song\n'
         self.info.text += f'song time: {now:.2f}\n'
-        self.info.text += f'Score: {self.player2.score}\n'
+        self.info.text += f'P1: {self.player1.score}\n'
+        self.info.text += f'P2: {self.player2.score}\n'
+
+    def boss_incoming(self):
+        self.display1.remove_beats()
+        self.display2.boss_incoming()
+
+    def boss_flip(self):
+        if len(self.display1.beats):
+            self.display1.remove_beats()
+            self.display2.playback(self.display1.playback_gems)
+        else:
+            self.display1.playback(self.display2.playback_gems)
+            self.display2.remove_beats()
+
+    def boss_outgoing(self):
+        self.display1.boss_outgoing()
+        self.display2.boss_outgoing()
 
 
 # Handles everything about Audio.
@@ -310,7 +326,7 @@ class BarlineData(object):
 
 # Display for a single gem at a position with a hue or color
 class GemDisplay(InstructionGroup):
-    def __init__(self, time, lane):
+    def __init__(self, time, lane, id = 0):
         super(GemDisplay, self).__init__()
 
 
@@ -318,7 +334,14 @@ class GemDisplay(InstructionGroup):
 
         self.time = time
 
-        self.color = Color(1,1,1)
+        self.id = id
+
+        if self.id == 0:
+            self.color = Color(1,1,1)
+        elif self.id == 1:
+            self.color = Color(1,.5,.5)
+        elif self.id == 2:
+            self.color = Color(.5,.5,1)
         self.add(self.color)
         
         y = get_lane_y(self.lane)
@@ -446,31 +469,34 @@ class ButtonDisplay(InstructionGroup):
 
 
 class Goat(InstructionGroup):
-    def __init__(self):
+    def __init__(self, id):
         super(Goat, self).__init__()
+
+        self.id = id
         self.lane = 0
 
         x = nowbar_w* Window.width
         self.y = Window.height/2
 
-        self.color = Color(1,1,1)
+
+        if self.id == 1:
+            self.color = Color(1,.5,.5)
+        if self.id == 2:
+            self.color = Color(.5,.5,1)
         self.add(self.color)
         self.avatar = CRectangle(cpos=(x,self.y), csize=(50*px, 50*px), texture=Image('../data/goat.png').texture)
 
         
         self.add(self.avatar)
 
-        self.add(Color(1,0,0))
+        if self.id == 1:
+            self.add(Color(1,0,0))
+        if self.id == 2:
+            self.add(Color(0,0,1))
+        
         self.cross = CRectangle(cpos=(nowbar_laser* Window.width,Window.height/2), csize=(10*px, 10*px))
 
         self.add(self.cross)
-
-        c = Color(1,1,1)
-        c.a = .1
-        self.add(c)
-
-        self.hotzone = CRectangle(cpos=(nowbar_laser* Window.width,Window.height/2), csize=(50*px, Window.height*px*2))
-        self.add(self.hotzone)
 
         self.move = "n"
 
@@ -497,7 +523,7 @@ class Goat(InstructionGroup):
         # set position of goat and target
         self.avatar.cpos = (x,self.y)
         self.cross.cpos = (nowbar_laser* Window.width,self.y)
-        self.hotzone.cpos = (nowbar_laser* Window.width,self.y)
+        
     
 
     def on_button_down(self, keycode):
@@ -515,9 +541,11 @@ class Goat(InstructionGroup):
 
 
 class GameDisplay(InstructionGroup):
-    def __init__(self, song_data, barline_data, audio_ctrl):
+    def __init__(self, song_data, barline_data, audio_ctrl, id):
         super(GameDisplay, self).__init__()
 
+
+        self.id = id
 
         self.stars = []
         for i in range(500):
@@ -539,13 +567,7 @@ class GameDisplay(InstructionGroup):
 
         self.barline_data = barline_data.get_barlines()
 
-        self.beats = [GemDisplay(*b) for b in self.beat_data]
-        for b in self.beats:
-            self.add(b)
-
-        self.barlines = [BarlineDisplay(*b) for b in self.barline_data]
-        for b in self.barlines:
-            self.add(b)
+        
 
 
         self.buttons = []
@@ -556,7 +578,7 @@ class GameDisplay(InstructionGroup):
             self.add(button)
 
 
-        self.goat = Goat()
+        self.goat = Goat(self.id)
 
         self.add(self.goat)
 
@@ -573,6 +595,21 @@ class GameDisplay(InstructionGroup):
 
 
         self.audio_ctrl = audio_ctrl
+
+        c = Color(1,1,1)
+        c.a = .1
+        self.add(c)
+        self.hotzone = CRectangle(cpos=(nowbar_laser* Window.width,Window.height/2), csize=(50*px, Window.height*px*2))
+        self.add(self.hotzone)
+
+
+        self.add_normal_beats()
+
+        self.barlines = [BarlineDisplay(*b) for b in self.barline_data]
+        for b in self.barlines:
+            self.add(b)
+
+        self.playback_gems = []
 
     # when the window size changes:
     def on_resize(self, win_size):
@@ -609,7 +646,7 @@ class GameDisplay(InstructionGroup):
                 if int(lane) == i:
                     # skip the current gem
                     continue
-                beat = GemDisplay(time, i)
+                beat = GemDisplay(time, i, self.id)
                 self.beats.append(beat)
 
     def add_normal_beats(self):
@@ -618,7 +655,7 @@ class GameDisplay(InstructionGroup):
         for b in self.beat_data:
             time, lane = b
             time = time + self.now_time
-            beat = GemDisplay(time, lane)
+            beat = GemDisplay(time, lane, self.id)
             self.beats.append(beat)
 
     
@@ -659,8 +696,18 @@ class GameDisplay(InstructionGroup):
         self.add_normal_beats()
         self.state = "normal"
 
-    
+    def playback(self, beats):
 
+        self.state = "playback"
+
+        self.remove_beats()
+        self.audio_ctrl.reset()
+        self.audio_ctrl.toggle()
+        self.beats = []
+        for b in beats:
+            beat = GemDisplay(b.time, b.lane, self.id)
+            self.beats.append(beat)
+        
 
     # call every frame to handle animation needs. The value now_time is in seconds
     # and is an absolute time position (not a delta time)
@@ -724,7 +771,7 @@ class GameDisplay(InstructionGroup):
             self.boss.set_cpos((Window.width - Window.width/8,Window.height/2))
 
 
-
+        self.hotzone.cpos = (nowbar_laser* Window.width, Window.height/2)
 
     # called by Player when succeeded in hitting this gem.
     def gem_hit(self, gem_idx):
@@ -750,7 +797,7 @@ class GameDisplay(InstructionGroup):
                     for b in beats:
                         if b.time == each.time:
                             b.color.a = 0
-
+                    self.playback_gems.append(each)
                     return True
         
         return False
@@ -769,7 +816,7 @@ class GameDisplay(InstructionGroup):
 # Handles game logic and keeps track of score.
 # Controls the GameDisplay and AudioCtrl based on what happens
 class Player(object):
-    def __init__(self, song_data, audio_ctrl, display):
+    def __init__(self, song_data, audio_ctrl, display, id, boss_incoming, boss_outgoing, boss_flip):
         super(Player, self).__init__()
 
         self.display = display
@@ -777,6 +824,10 @@ class Player(object):
         self.song_data = song_data
         self.score = 0
         self.state = 'normal'
+        self.id = id
+        self.boss_incoming = boss_incoming
+        self.boss_outgoing = boss_outgoing
+        self.boss_flip = boss_flip
         
 
     # called by MainWidget
@@ -818,14 +869,14 @@ class Player(object):
                         self.audio_ctrl.play_miss()
         
         if self.display.state == "normal":
-            if self.score == 10:
-                self.display.boss_incoming()
+            if self.score == 1:
+                self.boss_incoming()
                 self.score = 0
         
         if self.display.state == "boss":
             if self.score == 10:
                 self.score = 0
-                self.display.boss_outgoing()
+                self.boss_flip()
 
             
 
