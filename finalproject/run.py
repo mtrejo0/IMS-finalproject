@@ -202,15 +202,20 @@ class MainWidget(BaseWidget):
 
     def boss_incoming(self):
         self.display1.remove_beats()
+        self.display1.goat.hide()
         self.display2.boss_incoming()
 
     def boss_flip(self):
         if len(self.display1.beats):
             self.display1.remove_beats()
+            self.display1.goat.hide()
+            self.display2.goat.show()
             self.display2.playback(self.display1.playback_gems)
         else:
-            self.display1.playback(self.display2.playback_gems)
             self.display2.remove_beats()
+            self.display2.goat.hide()
+            self.display1.goat.show()
+            self.display1.playback(self.display2.playback_gems)
 
     def boss_outgoing(self):
         self.display1.boss_outgoing()
@@ -250,6 +255,8 @@ class AudioController(object):
 
         self.miss = WaveBuffer(f"../data/miss.wav", int(Audio.sample_rate * 0), int(Audio.sample_rate * .5))
 
+        self.laser = WaveBuffer(f"../data/laser.wav", int(Audio.sample_rate * .5), int(Audio.sample_rate * .1))
+
         # start paused
         self.track.pause()
         self.bg.pause()
@@ -268,6 +275,9 @@ class AudioController(object):
     def play_miss(self):
         self.mixer.add(WaveGenerator(self.miss))
         self.track.set_gain(0)
+
+    def play_laser(self):
+        self.mixer.add(WaveGenerator(self.laser))
 
     # return current time (in seconds) of song
     def get_time(self):
@@ -478,28 +488,33 @@ class Goat(InstructionGroup):
         x = nowbar_w* Window.width
         self.y = Window.height/2
 
+        self.color = self.goat_color(self.id)
 
-        if self.id == 1:
-            self.color = Color(1,.5,.5)
-        if self.id == 2:
-            self.color = Color(.5,.5,1)
         self.add(self.color)
         self.avatar = CRectangle(cpos=(x,self.y), csize=(50*px, 50*px), texture=Image('../data/goat.png').texture)
-
         
         self.add(self.avatar)
 
-        if self.id == 1:
-            self.add(Color(1,0,0))
-        if self.id == 2:
-            self.add(Color(0,0,1))
-        
+        # self.cross_color = None
+        # if self.id == 1:
+        #     self.cross_color = Color(1,0,0)
+        # if self.id == 2:
+        #     self.cross_color = Color(0,0,1)
+
+        # self.add(self.cross_color)
+
         self.cross = CRectangle(cpos=(nowbar_laser* Window.width,Window.height/2), csize=(10*px, 10*px))
 
         self.add(self.cross)
 
         self.move = "n"
 
+    def goat_color(self, id):
+        if id == 1:
+            return Color(1,.5,.5)
+        if id == 2:
+            return Color(.5,.5,1)
+        
     def on_update(self):
         x = nowbar_w* Window.width
         # move based on state
@@ -518,7 +533,6 @@ class Goat(InstructionGroup):
 
         # define the lane to hit the gem
         self.lane = get_lane(self.y)
-        print(self.lane, self.y)
 
         # set position of goat and target
         self.avatar.cpos = (x,self.y)
@@ -536,6 +550,12 @@ class Goat(InstructionGroup):
 
     def on_button_up(self, keycode):
         self.move = "n"
+
+    def hide(self):
+        self.color.a = 0
+    
+    def show(self):
+        self.color.a = 1
 
         
 
@@ -596,11 +616,6 @@ class GameDisplay(InstructionGroup):
 
         self.audio_ctrl = audio_ctrl
 
-        c = Color(1,1,1)
-        c.a = .1
-        self.add(c)
-        self.hotzone = CRectangle(cpos=(nowbar_laser* Window.width,Window.height/2), csize=(50*px, Window.height*px*2))
-        self.add(self.hotzone)
 
 
         self.add_normal_beats()
@@ -627,7 +642,6 @@ class GameDisplay(InstructionGroup):
 
     def get_num_object(self):
         return len(self.children)
-
     
     def remove_beats(self):
         beats = self.beats.copy()
@@ -668,6 +682,15 @@ class GameDisplay(InstructionGroup):
         self.label = CLabelRect(text="BOSS INCOMING", cpos=(Window.width/2,Window.height/2), font_size=21)
         self.add(self.label)
 
+
+        if self.goat.id == 1:
+            self.add(self.goat.goat_color(2))
+        else:
+            self.add(self.goat.goat_color(1))
+
+        self.taken = CRectangle(cpos=(Window.width - Window.width/8, Window.height/4), csize=(50*px, 50*px), texture=Image('../data/goat_reflected.png').texture)
+        
+        self.add(self.taken)
 
     def boss_start(self):
         self.state = "boss"
@@ -771,8 +794,6 @@ class GameDisplay(InstructionGroup):
             self.boss.set_cpos((Window.width - Window.width/8,Window.height/2))
 
 
-        self.hotzone.cpos = (nowbar_laser* Window.width, Window.height/2)
-
     # called by Player when succeeded in hitting this gem.
     def gem_hit(self, gem_idx):
         pass
@@ -844,6 +865,8 @@ class Player(object):
         self.display.goat.on_button_down(keycode)
 
         if keycode == "spacebar":
+            self.audio_ctrl.play_laser()
+
             if self.display.on_button_down(self.display.goat.lane, self.display.goat.y):
                 self.audio_ctrl.track.set_gain(1)
                 self.score += 1
@@ -874,9 +897,10 @@ class Player(object):
                 self.score = 0
         
         if self.display.state == "boss":
-            if self.score == 10:
+            if self.score == 2:
                 self.score = 0
                 self.boss_flip()
+
 
             
 
