@@ -135,6 +135,7 @@ class MainWidget(BaseWidget):
                 self.player1.on_button_action_down('down')
             elif value < -15000:
                 self.player1.on_button_action_down('up')
+            self.HOLD = Clock.schedule_interval(self.print_values, 0)
 
     # replace window instance with identifier
     def on_joy_axis(self, win, stickid, axisid, value):
@@ -147,10 +148,21 @@ class MainWidget(BaseWidget):
         self.joy_motion('hat', stickid, hatid, value)
 
     def on_joy_button_down(self, win, stickid, buttonid):
-        self.player1.on_button_action_down('spacebar')
+        if buttonid in [0,1,2,3]:
+            self.player1.on_button_action_down('spacebar')
+        elif buttonid == 11:
+            self.player1.on_button_action_down('up')
+        elif buttonid == 12:
+            self.player1.on_button_action_down('down')
+        
 
     def on_joy_button_up(self, win, stickid, buttonid):
-        self.player1.on_button_action_up('spacebar')
+        if buttonid in [0,1,2,3]:
+            self.player1.on_button_action_up('spacebar')
+        elif buttonid == 11:
+            self.player1.on_button_action_up('up')
+        elif buttonid == 12:
+            self.player1.on_button_action_up('down')
 
     def on_key_down(self, keycode, modifiers):
         # play / pause toggle
@@ -581,7 +593,8 @@ class Goat(InstructionGroup):
 
 
     def on_button_up(self, keycode):
-        self.move = "n"
+        if keycode == "up" or keycode == "down":
+            self.move = "n"
 
     def hide(self):
         self.color.a = 0
