@@ -18,7 +18,7 @@ from kivy.core.image import Image
 from kivy.properties import ObjectProperty, ListProperty
 
 
-from imslib.gfxutil import topleft_label, CEllipse, CRectangle, CLabelRect
+from imslib.gfxutil import topleft_label, CEllipse, CRectangle, CLabelRect, Rectangle
 
 from random import choice, randint, random
 
@@ -236,11 +236,11 @@ class MainWidget(BaseWidget):
         self.display1.goat.show()
         self.display2.goat.show()
 
-
-
     def end(self):
-        self.__init__()
-
+        self.canvas.add(Color(0,0,0))
+        self.canvas.add(CRectangle(cpos=(0,0), csize=(10000,10000)))
+        label = CLabelRect(text="Game Over\n\nAdd 4 more credits to play\nPress R to play again", cpos=(Window.width/2,Window.height/2), font_size=21)
+        self.canvas.add(label)
 
 # Handles everything about Audio.
 #   creates the main Audio object
@@ -330,9 +330,6 @@ class SongData(object):
 
     def get_beats(self):
         return self.beats
-
-
-    # TODO: figure out how gem and barline data should be represented and accessed...
 
 class BarlineData(object):
     def __init__(self, filepath):
@@ -520,7 +517,21 @@ class Goat(InstructionGroup):
 
         self.add(self.cross)
 
+        self.healthbar_color = Color(1,0,0)
+        self.add(self.healthbar_color)
+
+        self.healthbar = Rectangle(cpos=(x - 25*px ,self.y + 50*px), size=(50*px, 5*px))
+        self.add(self.healthbar)
+
+        self.healthbar_green_color = Color(0,1,0)
+        self.add(self.healthbar_green_color)
+
+        self.healthbar_green = Rectangle(pos=(x - 25*px ,self.y + 50*px), size=(50*px, 5*px))
+        self.add(self.healthbar_green)
+
         self.move = "n"
+
+        self.health = 100
 
     def goat_color(self, id):
         if id == 1:
@@ -550,6 +561,14 @@ class Goat(InstructionGroup):
         # set position of goat and target
         self.avatar.cpos = (x,self.y)
         self.cross.cpos = (nowbar_laser* Window.width,self.y)
+
+        self.healthbar.pos = (x - 10*px ,self.y + 25*px)
+        self.healthbar_green.pos = (x - 10*px ,self.y + 25*px)
+
+
+        l,w = self.healthbar_green.size
+        self.healthbar_green.size = (self.health,w)
+
         
     
 
@@ -566,9 +585,14 @@ class Goat(InstructionGroup):
 
     def hide(self):
         self.color.a = 0
+        self.healthbar_color.a = 0
+        self.healthbar_green_color.a = 0
     
     def show(self):
         self.color.a = 1
+        self.healthbar_color.a = 1
+        self.healthbar_green_color.a = 1
+        
 
         
 
@@ -650,7 +674,10 @@ class GameDisplay(InstructionGroup):
 
         self.add(self.taken_mask)
 
-        self.taken = CRectangle(cpos=(Window.width - Window.width/8 + random()*100, Window.height/4), csize=(50*px, 50*px), texture=Image('../data/goat_reflected.png').texture)
+        self.vortex = CRectangle(cpos=(Window.width - Window.width/8, Window.height/4), csize=(100*px, 100*px), texture=Image('../data/vortex.png').texture)
+        self.add(self.vortex)
+        
+        self.taken = CRectangle(cpos=(Window.width - Window.width/8, Window.height/4), csize=(50*px, 50*px), texture=Image('../data/goat_reflected.png').texture)
         self.add(self.taken)
 
         self.incoming_color = Color(1,0,0)
@@ -715,7 +742,7 @@ class GameDisplay(InstructionGroup):
         self.remove_beats()
         self.incoming_color = Color(1,0,0)
         self.add(self.incoming_color)
-        self.label = CLabelRect(text="BOSS INCOMING\n\nSAVE ME P2!", cpos=(Window.width/2,Window.height/2), font_size=21)
+        self.label = CLabelRect(text="BOSS INCOMING\n\nHELP ME GOAT YOURE MY ONLY HOPE!", cpos=(Window.width/2,Window.height/2), font_size=21)
         self.add(self.label)
 
         self.add_taken()
@@ -850,9 +877,8 @@ class GameDisplay(InstructionGroup):
     def on_button_up(self, lane):
         self.buttons[lane].on_up()
 
-    # called by Player to update score
-    def set_score(self, score):
-        pass
+    def miss(self):
+        self.goat.health -= 10
         
 
 
@@ -913,6 +939,8 @@ class Player(object):
                     if each.color.a == 1:
                         each.on_pass()
                         self.audio_ctrl.play_miss()
+
+                        self.display.miss()
         
         if self.display.state == "normal":
             if self.score == 1:
@@ -931,6 +959,9 @@ class Player(object):
                 self.boss_outgoing()
 
 
+        if self.display.goat.health <= 0:
+            print("get wrekt pleb u lose")
+            
         
 
 
