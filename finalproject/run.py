@@ -98,8 +98,8 @@ class MainWidget(BaseWidget):
 
         # state varaible for movement
 
-        self.player1 = Player(self.song_data, self.audio_ctrl, self.display1, 1, self.boss_incoming, self.boss_outgoing, self.boss_flip)
-        self.player2 = Player(self.song_data, self.audio_ctrl, self.display2, 2, self.boss_incoming, self.boss_outgoing, self.boss_flip)
+        self.player1 = Player(self.song_data, self.audio_ctrl, self.display1, 1, self.boss_incoming, self.boss_outgoing, self.boss_flip, self.end)
+        self.player2 = Player(self.song_data, self.audio_ctrl, self.display2, 2, self.boss_incoming, self.boss_outgoing, self.boss_flip, self.end)
 
     # functions for reading gamepad inputs 
     # show values in console
@@ -209,17 +209,37 @@ class MainWidget(BaseWidget):
         if len(self.display1.beats):
             self.display1.remove_beats()
             self.display1.goat.hide()
+            self.display1.remove_taken()
+
+            self.display2.add_taken()
             self.display2.goat.show()
             self.display2.playback(self.display1.playback_gems)
+
         else:
             self.display2.remove_beats()
             self.display2.goat.hide()
+            self.display2.remove_taken()
+
+            self.display1.add_taken()
             self.display1.goat.show()
             self.display1.playback(self.display2.playback_gems)
+
+
 
     def boss_outgoing(self):
         self.display1.boss_outgoing()
         self.display2.boss_outgoing()
+
+        self.display1.remove_taken()
+        self.display2.remove_taken()
+
+        self.display1.goat.show()
+        self.display2.goat.show()
+
+
+
+    def end(self):
+        self.__init__()
 
 
 # Handles everything about Audio.
@@ -495,13 +515,6 @@ class Goat(InstructionGroup):
         
         self.add(self.avatar)
 
-        # self.cross_color = None
-        # if self.id == 1:
-        #     self.cross_color = Color(1,0,0)
-        # if self.id == 2:
-        #     self.cross_color = Color(0,0,1)
-
-        # self.add(self.cross_color)
 
         self.cross = CRectangle(cpos=(nowbar_laser* Window.width,Window.height/2), csize=(10*px, 10*px))
 
@@ -626,6 +639,22 @@ class GameDisplay(InstructionGroup):
 
         self.playback_gems = []
 
+        self.taken_mask = Color(1,1,1)
+        
+        if self.goat.id == 1:
+            self.taken_mask = self.goat.goat_color(2)
+        else:
+            self.taken_mask = self.goat.goat_color(1)
+
+        self.taken_mask.a = 0
+
+        self.add(self.taken_mask)
+
+        self.taken = CRectangle(cpos=(Window.width - Window.width/8 + random()*100, Window.height/4), csize=(50*px, 50*px), texture=Image('../data/goat_reflected.png').texture)
+        self.add(self.taken)
+
+        self.incoming_color = Color(1,0,0)
+
     # when the window size changes:
     def on_resize(self, win_size):
         
@@ -673,24 +702,24 @@ class GameDisplay(InstructionGroup):
             self.beats.append(beat)
 
     
+    def add_taken(self):
+        self.taken_mask.a = 1
+
+    def remove_taken(self):
+        self.taken_mask.a = 0
+
+    
 
     def boss_incoming(self):
         self.state = "boss_incoming"
         self.remove_beats()
         self.incoming_color = Color(1,0,0)
         self.add(self.incoming_color)
-        self.label = CLabelRect(text="BOSS INCOMING", cpos=(Window.width/2,Window.height/2), font_size=21)
+        self.label = CLabelRect(text="BOSS INCOMING\n\nSAVE ME P2!", cpos=(Window.width/2,Window.height/2), font_size=21)
         self.add(self.label)
 
-
-        if self.goat.id == 1:
-            self.add(self.goat.goat_color(2))
-        else:
-            self.add(self.goat.goat_color(1))
-
-        self.taken = CRectangle(cpos=(Window.width - Window.width/8, Window.height/4), csize=(50*px, 50*px), texture=Image('../data/goat_reflected.png').texture)
+        self.add_taken()
         
-        self.add(self.taken)
 
     def boss_start(self):
         self.state = "boss"
@@ -730,6 +759,7 @@ class GameDisplay(InstructionGroup):
         for b in beats:
             beat = GemDisplay(b.time, b.lane, self.id)
             self.beats.append(beat)
+
         
 
     # call every frame to handle animation needs. The value now_time is in seconds
@@ -794,14 +824,6 @@ class GameDisplay(InstructionGroup):
             self.boss.set_cpos((Window.width - Window.width/8,Window.height/2))
 
 
-    # called by Player when succeeded in hitting this gem.
-    def gem_hit(self, gem_idx):
-        pass
-
-    # called by Player on pass or miss.
-    def gem_pass(self, gem_idx):
-        pass
-
     # called by Player on button down
     def on_button_down(self, lane, y):
         self.buttons[lane].on_down(y)
@@ -818,7 +840,7 @@ class GameDisplay(InstructionGroup):
                     for b in beats:
                         if b.time == each.time:
                             b.color.a = 0
-                    self.playback_gems.append(each)
+                    self.playback_gems.append(GemDisplay(each.time, each.lane, each.id))
                     return True
         
         return False
@@ -837,7 +859,7 @@ class GameDisplay(InstructionGroup):
 # Handles game logic and keeps track of score.
 # Controls the GameDisplay and AudioCtrl based on what happens
 class Player(object):
-    def __init__(self, song_data, audio_ctrl, display, id, boss_incoming, boss_outgoing, boss_flip):
+    def __init__(self, song_data, audio_ctrl, display, id, boss_incoming, boss_outgoing, boss_flip, end):
         super(Player, self).__init__()
 
         self.display = display
@@ -849,6 +871,7 @@ class Player(object):
         self.boss_incoming = boss_incoming
         self.boss_outgoing = boss_outgoing
         self.boss_flip = boss_flip
+        self.end = end
         
 
     # called by MainWidget
@@ -900,6 +923,15 @@ class Player(object):
             if self.score == 2:
                 self.score = 0
                 self.boss_flip()
+
+
+        if self.display.state == "playback":
+            if self.score == 1:
+                self.score = 0
+                self.boss_outgoing()
+
+
+        
 
 
             
