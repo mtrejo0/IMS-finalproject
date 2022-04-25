@@ -358,7 +358,7 @@ class GemDisplay(InstructionGroup):
         x = 0
 
         pos = (x,y)
-        img = choice(['../data/piano.png', '../data/sax.png', '../data/drums.png'])
+        img = choice(['../data/piano.png', '../data/drums.png'])
 
         self.gem = CRectangle(cpos=pos, csize=(50*px, 50*px), texture=Image(img).texture)
         
@@ -906,3 +906,10 @@ class Player(object):
 
 if __name__ == "__main__":
     run(MainWidget())
+
+# change to explosions after hitting the target
+# animate the goat moving through space
+# repeat the sequence played by the first player
+# add in the health bar for the main level
+# add in a display for the bosses health bar
+# penalty for spamming
