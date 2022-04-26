@@ -288,6 +288,8 @@ class AudioController(object):
         self.miss = WaveBuffer(f"../data/miss.wav", int(Audio.sample_rate * 0), int(Audio.sample_rate * .5))
 
         self.laser = WaveBuffer(f"../data/laser.wav", int(Audio.sample_rate * .5), int(Audio.sample_rate * .1))
+        
+        self.goatcry = WaveBuffer(f"../data/goatcry.wav", int(Audio.sample_rate * .25), int(Audio.sample_rate * .5))
 
         # start paused
         self.track.pause()
@@ -310,6 +312,9 @@ class AudioController(object):
 
     def play_laser(self):
         self.mixer.add(WaveGenerator(self.laser))
+
+    def play_goatcry(self):
+        self.mixer.add(WaveGenerator(self.goatcry))
 
     # return current time (in seconds) of song
     def get_time(self):
@@ -365,7 +370,7 @@ class BarlineData(object):
 
 # Display for a single gem at a position with a hue or color
 class GemDisplay(InstructionGroup):
-    def __init__(self, time, lane, id = 0):
+    def __init__(self, time, lane, id = 0, boss_gem=False):
         super(GemDisplay, self).__init__()
 
 
@@ -394,11 +399,17 @@ class GemDisplay(InstructionGroup):
         self.add(self.gem)
         self.hit = False
 
+        self.boss_gem = boss_gem
+
 
     # change to display this gem being hit
     def on_hit(self):
         self.color.rgb = (0,0,0)
         self.hit = True
+
+        if self.boss_gem:
+            self.color.a = 1
+            self.color.rgb = (1,1,0)
 
     # change to display a passed or missed gem
     def on_pass(self):
@@ -447,65 +458,6 @@ class BarlineDisplay(InstructionGroup):
 
         return xpos > 0 and xpos < Window.width
 
-# Displays one button on the nowbar
-class ButtonDisplay(InstructionGroup):
-    def __init__(self, lane):
-        super(ButtonDisplay, self).__init__()
-        self.lane = lane
-
-        x = nowbar_w* Window.width
-        y = get_lane_y(self.lane)
-
-
-        pos = (x,y)
-
-        self.color = Color(1,1,1)
-        self.color.a = 0
-        self.add(self.color)
-
-        self.button = CRectangle(cpos=pos, csize=(50,50))
-
-        self.add(self.button)
-        
-        self.linecolor = Color(1,0,0)
-        self.linecolor.a = 0
-        self.add(self.linecolor)
-        self.line = Line(points = [Window.width*nowbar_laser,y,Window.width*nowbar_w,y], width = 3)
-        self.add(self.line)
-
-
-        self.linecolor2 = Color(1,1,1)
-        self.linecolor2.a = 0
-        self.add(self.linecolor2)
-        self.line2 = Line(points = [Window.width*nowbar_laser,y,Window.width*nowbar_w,y], width = 1.5)
-        self.add(self.line2)
-
-
-    # displays when button is pressed down
-    def on_down(self,y):
-        self.linecolor.a = 1
-        self.linecolor2.a = 1
-        self.line2.points = (Window.width*nowbar_laser,y,Window.width*nowbar_w,y)
-        self.line.points = (Window.width*nowbar_laser,y,Window.width*nowbar_w,y)
-
-    # back to normal state
-    def on_up(self,):
-        self.linecolor.a = 0
-        self.linecolor2.a = 0
-
-    # modify object positions based on new window size
-    def on_resize(self, win_size):
-
-        x = nowbar_w* Window.width
-        y = get_lane_y(self.lane)
-
-        pos = (x,y)
-
-        self.button.cpos = pos
-
-        self.line.points = [Window.width*nowbar_laser,y,Window.width*nowbar_w,y]
-        self.line2.points = [Window.width*nowbar_laser,y,Window.width*nowbar_w,y]
-
 
 class Goat(InstructionGroup):
     def __init__(self, id):
@@ -545,6 +497,22 @@ class Goat(InstructionGroup):
 
         self.health = 100
 
+        self.hidden = False
+
+
+        self.linecolor = Color(1,0,0)
+        self.linecolor.a = 0
+        self.add(self.linecolor)
+        self.line = Line(points = [Window.width*nowbar_laser,self.y,Window.width*nowbar_w,self.y], width = 3)
+        self.add(self.line)
+
+
+        self.linecolor2 = Color(1,1,1)
+        self.linecolor2.a = 0
+        self.add(self.linecolor2)
+        self.line2 = Line(points = [Window.width*nowbar_laser,self.y,Window.width*nowbar_w,self.y], width = 1.5)
+        self.add(self.line2)
+
     def goat_color(self, id):
         if id == 1:
             return Color(1,.5,.5)
@@ -552,6 +520,11 @@ class Goat(InstructionGroup):
             return Color(.5,.5,1)
         
     def on_update(self):
+
+        if self.hidden:
+            return
+
+
         x = nowbar_w* Window.width
         # move based on state
         if self.move == "u":
@@ -581,30 +554,49 @@ class Goat(InstructionGroup):
         l,w = self.healthbar_green.size
         self.healthbar_green.size = (self.health,w)
 
-        
+
+        self.line.points = [Window.width*nowbar_laser,self.y,Window.width*nowbar_w,self.y]
+        self.line2.points = [Window.width*nowbar_laser,self.y,Window.width*nowbar_w,self.y]
+
     
 
     def on_button_down(self, keycode):
+        if self.hidden:
+            return 
+
         if keycode == "down":
             self.move = "d"
 
         if keycode == "up":
             self.move = "u"
 
+        if keycode == "spacebar":
+            self.linecolor.a = 1
+            self.linecolor2.a = 1
+            self.line2.points = (Window.width*nowbar_laser,self.y,Window.width*nowbar_w,self.y)
+            self.line.points = (Window.width*nowbar_laser,self.y,Window.width*nowbar_w,self.y)
+
 
     def on_button_up(self, keycode):
         if keycode == "up" or keycode == "down":
             self.move = "n"
+        
+        if keycode == "spacebar":
+
+            self.linecolor.a = 0
+            self.linecolor2.a = 0
 
     def hide(self):
         self.color.a = 0
         self.healthbar_color.a = 0
         self.healthbar_green_color.a = 0
+        self.hidden = True
     
     def show(self):
         self.color.a = 1
         self.healthbar_color.a = 1
         self.healthbar_green_color.a = 1
+        self.hidden = False
         
 
         
@@ -636,17 +628,6 @@ class GameDisplay(InstructionGroup):
         self.beat_data = song_data.get_beats()
 
         self.barline_data = barline_data.get_barlines()
-
-        
-
-
-        self.buttons = []
-
-        for i in range(5):
-            button = ButtonDisplay(i)
-            self.buttons.append(button)
-            self.add(button)
-
 
         self.goat = Goat(self.id)
 
@@ -701,12 +682,14 @@ class GameDisplay(InstructionGroup):
         for each in self.beats:
             each.on_resize(win_size)
 
-        for each in self.buttons:
-            each.on_resize(win_size)
-
         for each in self.stars:
             if random() < .2:
                 each[0].cpos = (randint(0,Window.width), randint(0,Window.height))
+
+        self.vortex.cpos= (Window.width - Window.width/8, Window.height/4)
+   
+        self.taken.cpos=(Window.width - Window.width/8, Window.height/4)
+
 
 
     def get_num_object(self):
@@ -729,7 +712,7 @@ class GameDisplay(InstructionGroup):
                 if int(lane) == i:
                     # skip the current gem
                     continue
-                beat = GemDisplay(time, i, self.id)
+                beat = GemDisplay(time, i, self.id, True)
                 self.beats.append(beat)
 
     def add_normal_beats(self):
@@ -866,7 +849,6 @@ class GameDisplay(InstructionGroup):
 
     # called by Player on button down
     def on_button_down(self, lane, y):
-        self.buttons[lane].on_down(y)
 
         for each in self.children:
             if each in self.beats and each.lane == lane:
@@ -874,12 +856,14 @@ class GameDisplay(InstructionGroup):
                 gem_x,_ = each.gem.cpos
 
                 if abs(gem_x - Window.width*nowbar_laser) < 50:
-                    each.on_hit()
+                    
 
                     beats = self.beats
                     for b in beats:
                         if b.time == each.time:
                             b.color.a = 0
+                    
+                    each.on_hit()
                     self.playback_gems.append(GemDisplay(each.time, each.lane, each.id))
                     return True
         
@@ -888,7 +872,7 @@ class GameDisplay(InstructionGroup):
 
     # called by Player on button up
     def on_button_up(self, lane):
-        self.buttons[lane].on_up()
+        pass
 
     def miss(self):
         self.goat.health -= 10
@@ -927,7 +911,10 @@ class Player(object):
         self.display.goat.on_button_down(keycode)
 
         if keycode == "spacebar":
-            self.audio_ctrl.play_laser()
+            if self.display.goat.hidden:
+                self.audio_ctrl.play_goatcry()
+            else:
+                self.audio_ctrl.play_laser()
 
             if self.display.on_button_down(self.display.goat.lane, self.display.goat.y):
                 self.audio_ctrl.track.set_gain(1)
@@ -938,8 +925,7 @@ class Player(object):
 
         if keycode == "spacebar":
             self.display.on_button_up(self.display.goat.lane)
-        for each in self.display.buttons:
-            each.on_up()
+
 
     # needed to check for pass gems (ie, went past the slop window)
     def on_update(self, time):
@@ -974,6 +960,7 @@ class Player(object):
 
         if self.display.goat.health <= 0:
             print("get wrekt pleb u lose")
+            exit()
             
         
 
