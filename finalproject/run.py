@@ -120,8 +120,6 @@ class MainWidget(BaseWidget):
         # unschedule if at zero or at minimum (FIRE)
         if axis in self.FIRE and value < self.STOP_FIRE or abs(value) < self.OFFSET:
             Clock.unschedule(self.HOLD)
-            self.player1.on_button_action_up('down')
-            self.player1.on_button_action_up('up')
             return
         elif abs(value) < self.OFFSET or self.HOLD:
             Clock.unschedule(self.HOLD)
@@ -130,11 +128,6 @@ class MainWidget(BaseWidget):
         if (axis in self.FIRE and value > self.STOP_FIRE or
                 axis not in self.FIRE and abs(value) >= self.OFFSET):
             self.VALUES = [event, id, axis, value]
-            self.HOLD = Clock.schedule_interval(self.print_values, 0)
-            if value > 15000:
-                self.player1.on_button_action_down('down')
-            elif value < -15000:
-                self.player1.on_button_action_down('up')
             self.HOLD = Clock.schedule_interval(self.print_values, 0)
 
     # replace window instance with identifier
@@ -896,6 +889,7 @@ class Player(object):
         self.boss_outgoing = boss_outgoing
         self.boss_flip = boss_flip
         self.end = end
+        self.boss_health = 2
         
 
     # called by MainWidget
@@ -954,9 +948,13 @@ class Player(object):
 
 
         if self.display.state == "playback":
-            if self.score == 1:
+            if self.score == 4:
                 self.score = 0
-                self.boss_outgoing()
+                self.boss_health -= 1
+                if self.boss_health <= 0:
+                    self.boss_outgoing()
+                else:
+                    self.boss_flip()
 
 
         if self.display.goat.health <= 0:
@@ -977,3 +975,11 @@ if __name__ == "__main__":
 # add in the health bar for the main level
 # add in a display for the bosses health bar
 # penalty for spamming
+
+# change the second part gems
+# make the gems easier since we have to account for movement time
+# add a way to heal
+# add the game over screen
+
+# maybe a vs mechanic if we have time
+# increase slop window
