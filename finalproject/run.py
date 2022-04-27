@@ -889,6 +889,7 @@ class Player(object):
         self.boss_outgoing = boss_outgoing
         self.boss_flip = boss_flip
         self.end = end
+        # number of cycles it takes to kill the boss
         self.boss_health = 2
         
 
