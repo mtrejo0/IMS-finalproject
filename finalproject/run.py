@@ -18,7 +18,7 @@ from kivy.core.image import Image
 from kivy.properties import ObjectProperty, ListProperty
 
 
-from imslib.gfxutil import topleft_label, CEllipse, CRectangle, CLabelRect, Rectangle
+from imslib.gfxutil import topleft_label, resize_topleft_label, CEllipse, CRectangle, CLabelRect, Rectangle
 
 from random import choice, randint, random
 
@@ -191,6 +191,7 @@ class MainWidget(BaseWidget):
     # handle changing displayed elements when window size changes
     # This function should call GameDisplay.on_resize 
     def on_resize(self, win_size):
+        resize_topleft_label(self.info)
         self.display1.on_resize(win_size)
         self.display2.on_resize(win_size)
 		
@@ -528,9 +529,9 @@ class Goat(InstructionGroup):
         x = nowbar_w* Window.width
         # move based on state
         if self.move == "u":
-            self.y = self.y + 20
+            self.y = self.y + Window.height/50
         elif self.move == "d":
-            self.y = self.y-20
+            self.y = self.y- Window.height/50
         elif self.move == "n":
             self.y = self.y
 
@@ -942,12 +943,12 @@ class Player(object):
                         self.display.miss()
         
         if self.display.state == "normal":
-            if self.score == 1:
+            if self.score == 10:
                 self.boss_incoming()
                 self.score = 0
         
         if self.display.state == "boss":
-            if self.score == 2:
+            if self.score == 4:
                 self.score = 0
                 self.boss_flip()
 
@@ -960,7 +961,7 @@ class Player(object):
 
         if self.display.goat.health <= 0:
             print("get wrekt pleb u lose")
-            exit()
+            #exit()
             
         
 
