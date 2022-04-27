@@ -164,12 +164,15 @@ class MainWidget(BaseWidget):
 
         if keycode[1] == 'down':
             self.player2.on_button_action_down(keycode[1])
+            self.player1.on_button_action_down(keycode[1])
 
         if keycode[1] == 'up':
             self.player2.on_button_action_down(keycode[1])
+            self.player1.on_button_action_down(keycode[1])
         
         if keycode[1] == 'spacebar':
             self.player2.on_button_action_down(keycode[1])
+            self.player1.on_button_action_down(keycode[1])
             
 
     def on_key_up(self, keycode):
@@ -394,6 +397,8 @@ class GemDisplay(InstructionGroup):
         self.hit = False
 
         self.boss_gem = boss_gem
+
+        self.game_over = False
 
 
     # change to display this gem being hit
@@ -634,9 +639,24 @@ class GameDisplay(InstructionGroup):
 
         self.now_time = 0
 
+        
+
+
+        self.boss_health = 2
+        
+
         self.add(Color(1,1,1))
         self.boss = CRectangle(cpos=(10000,10000), csize=(100*px, 100*px), texture=Image('../data/dog.png').texture)
         self.add(self.boss)
+
+        self.add(Color(1,0,0))
+        self.healthbar = Rectangle(pos=(10000,10000), size=(50*px, 5*px))
+        self.add(self.healthbar)
+
+        self.add(Color(0,1,0))
+        self.healthbar_green = Rectangle(pos=(10000,10000), size=(50*px, 5*px))
+        self.add(self.healthbar_green)
+
 
 
         self.audio_ctrl = audio_ctrl
@@ -685,7 +705,6 @@ class GameDisplay(InstructionGroup):
         self.taken.cpos=(Window.width - Window.width/8, Window.height/4)
 
 
-
     def get_num_object(self):
         return len(self.children)
     
@@ -708,6 +727,7 @@ class GameDisplay(InstructionGroup):
                     continue
                 beat = GemDisplay(time, i, self.id, True)
                 self.beats.append(beat)
+        self.beats[-1].game_over = True
 
     def add_normal_beats(self):
 
@@ -718,7 +738,8 @@ class GameDisplay(InstructionGroup):
             beat = GemDisplay(time, lane, self.id)
             self.beats.append(beat)
 
-    
+        self.beats[-1].game_over = True
+
     def add_taken(self):
         self.taken_mask.a = 1
 
@@ -750,6 +771,8 @@ class GameDisplay(InstructionGroup):
         self.state = "boss_outgoing"
         # remove boss
         self.boss.set_cpos((10000,10000))
+        self.healthbar.pos=(10000,10000)
+        self.healthbar_green.pos=(10000,10000)
 
         # remove boss gems
         self.remove_beats()
@@ -837,9 +860,16 @@ class GameDisplay(InstructionGroup):
         
         if self.state == "boss":
             
+            boss_x = Window.width - Window.width/8
+            boss_y = Window.height/2
             # show the boss
-            self.boss.set_cpos((Window.width - Window.width/8,Window.height/2))
+            self.boss.set_cpos((boss_x,boss_y))
 
+            self.healthbar.pos=(boss_x - 25*px ,boss_y + 50*px)
+            self.healthbar_green.pos=(boss_x - 25*px ,boss_y + 50*px)
+
+            l,w = self.healthbar_green.size
+            self.healthbar_green.size = (self.boss_health*25*px,w)
 
     # called by Player on button down
     def on_button_down(self, lane, y):
@@ -870,6 +900,7 @@ class GameDisplay(InstructionGroup):
 
     def miss(self):
         self.goat.health -= 10
+
         
 
 
@@ -933,25 +964,30 @@ class Player(object):
                 if Window.width*nowbar_laser - gem_x > 50 and each.hit == False:
                     if each.color.a == 1:
                         each.on_pass()
+                        if each.game_over:
+                            print("game over")
+                            exit()
                         self.audio_ctrl.play_miss()
 
                         self.display.miss()
         
         if self.display.state == "normal":
-            if self.score == 10:
+            if self.score == 1:
                 self.boss_incoming()
                 self.score = 0
         
         if self.display.state == "boss":
-            if self.score == 4:
+            if self.score == 2:
                 self.score = 0
                 self.boss_flip()
 
 
         if self.display.state == "playback":
-            if self.score == 4:
+            
+            if self.score == 2:
                 self.score = 0
                 self.boss_health -= 1
+                self.display.boss_health = self.boss_health
                 if self.boss_health <= 0:
                     self.boss_outgoing()
                 else:
@@ -959,10 +995,11 @@ class Player(object):
 
 
         if self.display.goat.health <= 0:
-            print("get wrekt pleb u lose")
-            #exit()
+            print("Goat lost all life")
+            exit()
             
-        
+
+
 
 
             
