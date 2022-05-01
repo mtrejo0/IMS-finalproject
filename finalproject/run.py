@@ -164,15 +164,15 @@ class MainWidget(BaseWidget):
 
         if keycode[1] == 'down':
             self.player2.on_button_action_down(keycode[1])
-            self.player1.on_button_action_down(keycode[1])
+            #self.player1.on_button_action_down(keycode[1])
 
         if keycode[1] == 'up':
             self.player2.on_button_action_down(keycode[1])
-            self.player1.on_button_action_down(keycode[1])
+            #self.player1.on_button_action_down(keycode[1])
         
         if keycode[1] == 'spacebar':
             self.player2.on_button_action_down(keycode[1])
-            self.player1.on_button_action_down(keycode[1])
+            #self.player1.on_button_action_down(keycode[1])
             
 
     def on_key_up(self, keycode):
