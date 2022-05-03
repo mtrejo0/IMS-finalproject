@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # lecture7.py: Screen system demo. See imslib/screen.py
 
 import sys, os

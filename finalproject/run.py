@@ -389,7 +389,7 @@ class GemDisplay(InstructionGroup):
         x = 0
 
         pos = (x,y)
-        img = choice(['../data/piano.png', '../data/drums.png'])
+        img = choice(['../data/note.png'])
 
         self.gem = CRectangle(cpos=pos, csize=(50*px, 50*px), texture=Image(img).texture)
         
