@@ -1,139 +1,141 @@
-# screen.py
+<<<<<<< HEAD
+# lecture7.py: Screen system demo. See imslib/screen.py
 
-from .core import BaseWidget, run
+import sys, os
+sys.path.insert(0, os.path.abspath('..'))
 
+from imslib.core import BaseWidget, run
+from imslib.gfxutil import topleft_label, resize_topleft_label, CEllipse
+from imslib.screen import ScreenManager, Screen
+
+from kivy.core.window import Window
 from kivy.clock import Clock as kivyClock
-from kivy.uix.widget import Widget
+from kivy.graphics import Color, Ellipse
+from kivy.uix.button import Button
+from kivy import metrics
 
+# metrics allows kivy to create screen-density-independent sizes. 
+# Here, 20 dp will always be the same physical size on screen regardless of resolution or OS.
+# Another option is to use metrics.pt or metrics.sp. See https://kivy.org/doc/stable/api-kivy.metrics.html
+font_sz = metrics.dp(20)
+button_sz = metrics.dp(100)
+px = metrics.dp(1)
 
-class Screen(Widget):
-    def __init__(self, name, always_update = False, **kwargs):
-        """A screen object, similar to BaseWidget, but intended to be used with ScreenManager
-        for managing an app with multiple screens.
+# IntroScreen is just like a MainWidget, but it derives from Screen instead of BaseWidget.
+# This allows it to work with the ScreenManager system.
+class IntroScreen(Screen):
+    def __init__(self, **kwargs):
+        super(IntroScreen, self).__init__(always_update=True, **kwargs)
 
-        :param name: the name of this screen. Must be unique across all screens.
-        :param always_update: if True, on_update() is called all the time, even if this Screen is not active
-        """
+        self.info = topleft_label()
+        self.info.text = "Intro Screen"
+        self.info.text += "->: switch to main\n"
+        self.add_widget(self.info)
 
-        super(Screen, self).__init__(**kwargs)
-        self.name = name
-        self.always_update = always_update
-        self.manager = None
+        self.counter = 0
 
-    def switch_to(self, screen_name):
-        """Switches to from the current screen to a different screen.
-
-        :param screen_name: the name of the screen 
-        """
-        self.manager.switch_to(screen_name)
-
+        # A button is a widget. It must be added with add_widget()
+        # button.bind allows you to set up a reaction to when the button is pressed (or released).
+        # It takes a function as argument. You can define one, or just use lambda as an inline function.
+        # In this case, the button will cause a screen switch
+        self.button = Button(text='Main', font_size=font_sz, size = (button_sz, button_sz), pos = (Window.width/2, Window.height/2))
+        self.button.bind(on_release= lambda x: self.switch_to('main'))
+        self.add_widget(self.button)
 
     def on_key_down(self, keycode, modifiers):
-        """Override to receive keydown events. Only called when active.
+        if keycode[1] == 'right':
+            # tell screen manager to switch from the current screen to some other screen, by name.
+            print('IntroScreen next')
+            self.switch_to('main')
 
-        :param keycode: ``[ascii-code, key]`` ascii-code is an int, and key is a string. 
-            Example: [49, '1'] when the 1 key is pressed.
-
-        :param modifiers: a list of held-down modifier keys, like 'shift', 'ctrl', 'alt', 'meta'
-        """
-        pass
-
-    def on_key_up(self, keycode):
-        """Override to receive keyup events. Only called when active.
-
-        :param keycode: ``[ascii-code, key]`` ascii-code is an int, and key is a string. 
-            Example: [49, '1'] when the 1 key is released.
-
-        """
-        pass
-
+    # this shows that on_update() gets called when this screen is active.
+    # if you want on_update() called when a screen is NOT active, then pass in an extra argument:
+    # always_update=True to the screen constructor.
     def on_update(self):
-        """Override to get called every graphics frame update, typically around 60 times per second.
-        Called when active, or if self.always_update == True.
-        """
-        pass
+        self.info.text = "Intro Screen\n"
+        self.info.text += "->: switch to main\n"
+        self.info.text += f'fps:{kivyClock.get_fps():.1f}\n'
+        self.info.text += f'counter:{self.counter}\n'
+        self.counter += 1
 
+    # on_resize always gets called - even when a screen is not active.
     def on_resize(self, win_size):
-        """Override to get notified when the main window just got resized. Called when active or inactive.
-        
-        :param win_size: ``[width, height]`` - the new window size
-
-        """
-        pass
+        self.button.pos = (Window.width/2, Window.height/2)
+        resize_topleft_label(self.info)
 
 
+class MainScreen(Screen):
+    def __init__(self, **kwargs):
+        super(MainScreen, self).__init__(**kwargs)
+
+        self.info = topleft_label()
+        self.info.text = "MainScreen\n"
+        self.info.text += "->: switch to end\n"
+        self.info.text += "<-: switch to intro\n"
+        self.info.text += "Drag mouse to draw\n"
+
+        self.add_widget(self.info)
+
+        # more buttons - one to switch back to the intro screen, and one to switch to the end screen.
+        self.button1 = Button(text='Intro', font_size=font_sz, size = (button_sz, button_sz), pos = (Window.width * .4, Window.height/2))
+        self.button1.bind(on_release= lambda x: self.switch_to('intro'))
+        self.add_widget(self.button1)
+
+        self.button2 = Button(text='End', font_size=font_sz, size = (button_sz, button_sz), pos = (Window.width * .6, Window.height/2))
+        self.button2.bind(on_release= lambda x: self.switch_to('end'))
+        self.add_widget(self.button2)
+
+        self.objects = []
+
+    def on_key_down(self, keycode, modifiers):
+        if keycode[1] == 'right':
+            print('MainScreen next')
+            self.switch_to('end')
+
+        if keycode[1] == 'left':
+            print('MainScreen prev')
+            self.switch_to('intro')
+
+    # simple drawing example, which only can happen when this screen is active.
+    def on_touch_move(self, touch):
+        # some drawing
+        obj = CEllipse(cpos=touch.pos, csize=(20,20))
+        self.canvas.add(obj)
+        self.objects.append(obj)
+
+    # on_enter gets called when a screen is about to enter. You can use this to setup or initialize
+    # stuff on this screen. Here, we remove whatever drawing happens to be here already.
+    # If you remove this code, then the previous drawing of objects will remain on screen.
     def on_enter(self):
-        """Override to get called when this screen is about to become active."""
-        pass
-
-    def on_exit(self):
-        """Override to get called when this screen is about to become inactive."""
-        pass
+        # this is called when a screen is about to become active.
+        for o in self.objects:
+            self.canvas.remove(o)
+        self.objects = []
 
 
-class ScreenManager(BaseWidget):
-    def __init__(self):
-        """Derives from BaseWidget. Use this as the MainWidget to manage multiple Screens.
-        Call :meth:`add_screen` with all Screen subclasses. Only one Screen can be active. 
-        A Screen is made active by calling :meth:`switch_to`."""
-        super(ScreenManager, self).__init__()
+class EndScreen(Screen):
+    def __init__(self, **kwargs):
+        super(EndScreen, self).__init__(**kwargs)
 
-        self.screens = []
-        self.cur_screen = None
-
-    def add_screen(self, screen):
-        """Register a screen with the ScreenManager. The first screen to be added 
-        will become the current active screen.
-
-        :param screen: an object inherited from ``Screen``.
-
-        """
-        set_current = len(self.screens) == 0
-
-        screen.manager = self
-        self.screens.append(screen)
-
-        if set_current:
-            self.switch_to(screen.name)
-
-    def switch_to(self, screen_name):
-        """Switches to from the current screen to a different screen.
-
-        :param screen_name: the name of the screen 
-        """
-        kivyClock.schedule_once(lambda dt: self._switch_to(screen_name))
+        self.info = topleft_label()
+        self.info.text = "EndScreen\n"
+        self.info.text += "<-: switch main\n"
+        self.add_widget(self.info)
 
     def on_key_down(self, keycode, modifiers):
-        ""
-        if self.cur_screen:
-            self.cur_screen.on_key_down(keycode, modifiers)
+        if keycode[1] == 'left':
+            print('EndScreen prev')
+            self.switch_to('main')
 
-    def on_key_up(self, keycode):
-        ""
-        if self.cur_screen:
-            self.cur_screen.on_key_up(keycode)
+# create the screen manager (this is the replacement for "MainWidget")
+sm = ScreenManager()
 
-    def on_resize(self, win_size):
-        ""
-        for s in self.screens:
-            s.on_resize(win_size)
+# add all screens to the manager. By default, the first screen added is the current screen.
+# each screen must have a name argument (so that switch_to() will work).
+# If screens need to share data between themselves, feel free to pass in additional arguments
+# like a shared data class or they can even know directly about each other as needed.
+sm.add_screen(IntroScreen(name='intro'))
+sm.add_screen(MainScreen(name='main'))
+sm.add_screen(EndScreen(name='end'))
 
-    def on_update(self):
-        ""
-        for s in self.screens:
-            if s == self.cur_screen or s.always_update:
-                s.on_update()
-
-    def _switch_to(self, screen_name):
-        if self.cur_screen:
-            self.cur_screen.on_exit()
-            self.remove_widget(self.cur_screen)
-
-        next_screen = [s for s in self.screens if s.name == screen_name]
-        if next_screen:
-            self.cur_screen = next_screen[0]
-            self.cur_screen.on_enter()
-            self.add_widget(self.cur_screen)
-        else:
-            raise Exception('Error: Screen name {} not found'.format(screen_name))
-
+run(sm)
