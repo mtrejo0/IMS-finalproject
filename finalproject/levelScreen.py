@@ -40,9 +40,9 @@ px = metrics.dp(1)
 # This allows it to work with the ScreenManager system.
 
 levelFiles = {}
-levelFiles['Corneria'] = 'corneria-2-'
-levelFiles['March'] = 'imperial-'
-levelFiles['Dedede'] = 'dedede-'
+levelFiles['Corneria'] = 'corneria-2'
+levelFiles['March'] = 'imperial'
+levelFiles['Dedede'] = 'dedede'
 levelName = 'Corneria'
 # configuration parameters:
 nowbar_w = 0.025        
@@ -89,7 +89,7 @@ class InstructionScreen(Screen):
         if keycode[1] == 'spacebar':
             print(levelName)
             print('MainScreen next')
-            self.switch_to(levelName)
+            self.switch_to('main')
 
     def levelSelect(self, levelName):
         self.level = levelName
@@ -110,13 +110,17 @@ class SelectScreen(Screen):
         # button.bind allows you to set up a reaction to when the button is pressed (or released).
         # It takes a function as argument. You can define one, or just use lambda as an inline function.
         # In this case, the button will cause a screen switch
-        self.button1 = Button(text='Corneria\n(Medium)', font_size=font_sz, size = (button_sz, button_sz), pos = (Window.width/2, Window.height/2))
+        self.button1 = Button(text='Corneria\n(Medium)', font_size=font_sz, size = (button_sz, button_sz), pos = (Window.width/4, Window.height/2))
         self.button1.bind(on_release= lambda x: self.levelSelect('Corneria'))
         self.add_widget(self.button1)
 
-        self.button2 = Button(text='Imperial March\n(Easy)', font_size=font_sz * .75, size = (button_sz, button_sz), pos = (Window.width * .6, Window.height/2))
+        self.button2 = Button(text='Imperial March\n(Easy)', font_size=font_sz * .75, size = (button_sz, button_sz), pos = (Window.width /2 , Window.height/2))
         self.button2.bind(on_release= lambda x: self.levelSelect('March'))
         self.add_widget(self.button2)
+
+        self.button3 = Button(text='King Dedede\'s Theme\n(Hard)', font_size=font_sz * .75, size = (button_sz, button_sz), pos = (Window.width * .75, Window.height/2))
+        self.button3.bind(on_release= lambda x: self.levelSelect('Dedede'))
+        self.add_widget(self.button3)
 
     def levelSelect(self, name):
         global levelName
@@ -169,13 +173,14 @@ class MainScreen(Screen):
         Window.bind(on_joy_button_up=self.on_joy_button_up)
         Window.bind(on_joy_button_down=self.on_joy_button_down)
 
-
-        gems_file1 = '../data/dedede-melody-gems.txt'
-        gems_file2 = '../data/dedede-bass-gems.txt'
+        base = levelFiles[levelName]
+        gems_file1 = '../data/' + base + '-melody-gems.txt'
+        gems_file2 = '../data/' + base + '-bass-gems.txt'
 
         barlines_file = '../data/barline.txt'
 
-        base = "dedede"
+        
+
         self.objects = []
         self.song_data1  = SongData(gems_file1)
         self.song_data2 = SongData(gems_file2)
@@ -257,6 +262,7 @@ class MainScreen(Screen):
     def on_key_down(self, keycode, modifiers):
         # play / pause toggle
         if keycode[1] == 'p':
+            print(levelName)
             self.audio_ctrl.toggle()
 
         if keycode[1] == 'down':
@@ -357,6 +363,35 @@ class MainScreen(Screen):
         for o in self.objects:
             self.canvas.remove(o)
         self.objects = []
+        base = levelFiles[levelName]
+        gems_file1 = '../data/' + base + '-melody-gems.txt'
+        gems_file2 = '../data/' + base + '-bass-gems.txt'
+
+        barlines_file = '../data/barline.txt'
+
+        
+
+        self.objects = []
+        self.song_data1  = SongData(gems_file1)
+        self.song_data2 = SongData(gems_file2)
+        self.audio_ctrl = AudioController(base)
+
+        self.barlines_data  = BarlineData(barlines_file)
+        
+
+        self.display1 = GameDisplay(self.song_data1, self.barlines_data, self.audio_ctrl, 1)
+        self.display2 = GameDisplay(self.song_data2, self.barlines_data, self.audio_ctrl, 2)
+        
+        self.canvas.add(self.display1)
+        self.canvas.add(self.display2)
+
+        self.info = topleft_label()
+        self.add_widget(self.info)
+
+        # state varaible for movement
+
+        self.player1 = Player(self.song_data1, self.audio_ctrl, self.display1, 1, self.boss_incoming, self.boss_outgoing, self.boss_flip, self.end)
+        self.player2 = Player(self.song_data2, self.audio_ctrl, self.display2, 2, self.boss_incoming, self.boss_outgoing, self.boss_flip, self.end)
 
 class AudioController(object):
     def __init__(self, song_path):
@@ -1128,7 +1163,7 @@ sm = ScreenManager()
 
 sm.add_screen(SelectScreen(name='Select'))
 sm.add_screen(InstructionScreen(name='Instructions'))
-sm.add_screen(MainScreen(name='Corneria'))
+sm.add_screen(MainScreen(name='main'))
 sm.add_screen(EndScreen(name='end'))
 
 run(sm)
