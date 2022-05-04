@@ -6,7 +6,7 @@ sys.path.insert(0, os.path.abspath('..'))
 from imslib.core import BaseWidget, run, lookup
 from imslib.audio import Audio
 from imslib.mixer import Mixer
-from imslib.wavegen import WaveGenerator
+from imslib.wavegen import WaveGenerator, SpeedModulator
 from imslib.wavesrc import WaveBuffer, WaveFile
 
 from kivy.graphics.instructions import InstructionGroup
@@ -75,12 +75,16 @@ class MainWidget(BaseWidget):
         Window.bind(on_joy_button_down=self.on_joy_button_down)
 
 
-        gems_file1 = '../data/corneria-2-melody-gems.txt'
-        gems_file2 = '../data/corneria-2-bass-gems.txt'
+
+        # base = "corneria-2"
+        # base = "dedede"
+        base = "imperial"
+
+
+        gems_file1 = f'../data/{base}-melody-gems.txt'
+        gems_file2 = f'../data/{base}-bass-gems.txt'
 
         barlines_file = '../data/barline.txt'
-
-        base = "corneria-2"
 
         self.song_data1  = SongData(gems_file1)
         self.song_data2 = SongData(gems_file2)
@@ -273,11 +277,11 @@ class AudioController(object):
         rest = f'../data/{song_path}-rest'
 
         # song
-        self.track = WaveGenerator(WaveFile(solo + ".wav"))
+        self.track = SpeedModulator(WaveGenerator(WaveFile(solo + ".wav")), 1)
 
-        self.bg = WaveGenerator(WaveFile(bg + ".wav"))
+        self.bg = SpeedModulator(WaveGenerator(WaveFile(bg + ".wav")), 1)
 
-        self.rest = WaveGenerator(WaveFile(rest + ".wav"))
+        self.rest = SpeedModulator(WaveGenerator(WaveFile(rest + ".wav")), 1)
 
 
         self.mixer.add(self.track)
@@ -291,23 +295,29 @@ class AudioController(object):
         self.goatcry = WaveBuffer(f"../data/goatcry.wav", int(Audio.sample_rate * .25), int(Audio.sample_rate * .5))
 
         # start paused
-        self.track.pause()
-        self.bg.pause()
-        self.rest.pause()
+        self.track.generator.pause()
+        self.bg.generator.pause()
+        self.rest.generator.pause()
 
     # start / stop the song
     def toggle(self):
-        self.track.play_toggle()
-        self.bg.play_toggle()
-        self.rest.play_toggle()
+        self.track.generator.play_toggle()
+        self.bg.generator.play_toggle()
+        self.rest.generator.play_toggle()
     # mute / unmute the solo track
     def set_mute(self, mute):
         pass
+    
 
     # play a sound-fx (miss sound)
     def play_miss(self):
         self.mixer.add(WaveGenerator(self.miss))
-        self.track.set_gain(0)
+        self.track.generator.set_gain(0)
+
+        self.reset_speed()
+
+    def play_track(self):
+        self.track.generator.set_gain(1)
 
     def play_laser(self):
         self.mixer.add(WaveGenerator(self.laser))
@@ -317,17 +327,30 @@ class AudioController(object):
 
     # return current time (in seconds) of song
     def get_time(self):
-        return self.track.frame/44100
+        return self.track.generator.frame/44100
 
     # needed to update audio
     def reset(self):
-        self.track.reset()
-        self.bg.reset()
-        self.rest.reset()
+        self.track.generator.reset()
+        self.bg.generator.reset()
+        self.rest.generator.reset()
 
     # needed to update audio
     def on_update(self):
         self.audio.on_update()
+
+    def change_speed(self, change):
+        self.track.speed = 1 + .05 * change
+        self.bg.speed = 1 + .05 * change
+        self.rest.speed = 1 + .05 * change
+
+
+    def reset_speed(self):
+        self.track.speed = 1
+
+        self.bg.speed = 1
+
+        self.rest.speed = 1
 
 
 # for parsing gem text file: return (time, lane) from a single line of text
@@ -891,6 +914,10 @@ class GameDisplay(InstructionGroup):
                     
                     each.on_hit()
                     self.playback_gems.append(GemDisplay(each.time, each.lane, each.id))
+                    
+                    if self.state == "boss":
+                        self.audio_ctrl.change_speed(-10)
+
                     return True
         
         return False
@@ -929,7 +956,7 @@ class Player(object):
     # called by MainWidget
     def on_button_down(self, lane):
         if self.display.on_button_down(lane):
-            self.audio_ctrl.track.set_gain(1)
+            self.audio_ctrl.play_track()
             self.score += 1
         
     # called by MainWidget
@@ -946,7 +973,7 @@ class Player(object):
                 self.audio_ctrl.play_laser()
 
             if self.display.on_button_down(self.display.goat.lane, self.display.goat.y):
-                self.audio_ctrl.track.set_gain(1)
+                self.audio_ctrl.play_track()
                 self.score += 1
         
     def on_button_action_up(self, keycode):
@@ -974,12 +1001,12 @@ class Player(object):
                         self.display.miss()
         
         if self.display.state == "normal":
-            if self.score == 20:
+            if self.score == 1:
                 self.boss_incoming()
                 self.score = 0
         
         if self.display.state == "boss":
-            if self.score == 2:
+            if self.score == 20:
                 self.score = 0
                 self.boss_flip()
 
