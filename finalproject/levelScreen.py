@@ -36,6 +36,8 @@ font_sz = metrics.dp(20)
 button_sz = metrics.dp(100)
 px = metrics.dp(1)
 
+
+
 # IntroScreen is just like a MainWidget, but it derives from Screen instead of BaseWidget.
 # This allows it to work with the ScreenManager system.
 
@@ -70,6 +72,10 @@ def get_lane(y):
     margin = wh/5
 
     return int(y//margin)
+
+# create the screen manager (this is the replacement for "MainWidget")
+
+
 
 class InstructionScreen(Screen):
     def __init__(self, **kwargs):
@@ -124,7 +130,9 @@ class SelectScreen(Screen):
 
     def levelSelect(self, name):
         global levelName
+        global sm
         levelName = name
+        sm.add_screen(MainScreen(name='main'))
         self.switch_to('Instructions')
 
     # def on_key_down(self, keycode, modifiers):
@@ -307,6 +315,9 @@ class MainScreen(Screen):
         self.player1.on_update(now)
         self.player2.on_update(now)
 
+        if self.player1.dead or self.player2.dead:
+            self.switch_to('end')
+
         self.info.text = 'p: pause/unpause song\n'
         self.info.text += f'song time: {now:.2f}\n'
         self.info.text += f'P1: {self.player1.score}\n'
@@ -363,35 +374,35 @@ class MainScreen(Screen):
         for o in self.objects:
             self.canvas.remove(o)
         self.objects = []
-        base = levelFiles[levelName]
-        gems_file1 = '../data/' + base + '-melody-gems.txt'
-        gems_file2 = '../data/' + base + '-bass-gems.txt'
+        # base = levelFiles[levelName]
+        # gems_file1 = '../data/' + base + '-melody-gems.txt'
+        # gems_file2 = '../data/' + base + '-bass-gems.txt'
 
-        barlines_file = '../data/barline.txt'
+        # barlines_file = '../data/barline.txt'
 
         
 
-        self.objects = []
-        self.song_data1  = SongData(gems_file1)
-        self.song_data2 = SongData(gems_file2)
-        self.audio_ctrl = AudioController(base)
+        # self.objects = []
+        # self.song_data1  = SongData(gems_file1)
+        # self.song_data2 = SongData(gems_file2)
+        # self.audio_ctrl = AudioController(base)
 
-        self.barlines_data  = BarlineData(barlines_file)
+        # self.barlines_data  = BarlineData(barlines_file)
         
 
-        self.display1 = GameDisplay(self.song_data1, self.barlines_data, self.audio_ctrl, 1)
-        self.display2 = GameDisplay(self.song_data2, self.barlines_data, self.audio_ctrl, 2)
+        # self.display1 = GameDisplay(self.song_data1, self.barlines_data, self.audio_ctrl, 1)
+        # self.display2 = GameDisplay(self.song_data2, self.barlines_data, self.audio_ctrl, 2)
         
-        self.canvas.add(self.display1)
-        self.canvas.add(self.display2)
+        # self.canvas.add(self.display1)
+        # self.canvas.add(self.display2)
 
-        self.info = topleft_label()
-        self.add_widget(self.info)
+        # self.info = topleft_label()
+        # self.add_widget(self.info)
 
-        # state varaible for movement
+        # # state varaible for movement
 
-        self.player1 = Player(self.song_data1, self.audio_ctrl, self.display1, 1, self.boss_incoming, self.boss_outgoing, self.boss_flip, self.end)
-        self.player2 = Player(self.song_data2, self.audio_ctrl, self.display2, 2, self.boss_incoming, self.boss_outgoing, self.boss_flip, self.end)
+        # self.player1 = Player(self.song_data1, self.audio_ctrl, self.display1, 1, self.boss_incoming, self.boss_outgoing, self.boss_flip, self.end)
+        # self.player2 = Player(self.song_data2, self.audio_ctrl, self.display2, 2, self.boss_incoming, self.boss_outgoing, self.boss_flip, self.end)
 
 class AudioController(object):
     def __init__(self, song_path):
@@ -1059,6 +1070,7 @@ class Player(object):
         self.end = end
         # number of cycles it takes to kill the boss
         self.boss_health = 2
+        self.dead = False
         
 
     # called by MainWidget
@@ -1133,6 +1145,7 @@ class Player(object):
 
         if self.display.goat.health <= 0:
             print("Goat lost all life")
+            self.dead = True
             #exit()
             
 
@@ -1144,7 +1157,7 @@ class EndScreen(Screen):
         super(EndScreen, self).__init__(**kwargs)
 
         self.info = topleft_label()
-        self.info.text = "EndScreen\n"
+        self.info.text = "Game Over: You are baaad\n"
         self.info.text += "<-: switch main\n"
         self.add_widget(self.info)
 
@@ -1153,7 +1166,6 @@ class EndScreen(Screen):
             print('EndScreen prev')
             self.switch_to('main')
 
-# create the screen manager (this is the replacement for "MainWidget")
 sm = ScreenManager()
 
 # add all screens to the manager. By default, the first screen added is the current screen.
@@ -1163,7 +1175,6 @@ sm = ScreenManager()
 
 sm.add_screen(SelectScreen(name='Select'))
 sm.add_screen(InstructionScreen(name='Instructions'))
-sm.add_screen(MainScreen(name='main'))
 sm.add_screen(EndScreen(name='end'))
 
 run(sm)
