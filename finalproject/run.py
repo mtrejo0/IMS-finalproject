@@ -75,20 +75,22 @@ class MainWidget(BaseWidget):
         Window.bind(on_joy_button_down=self.on_joy_button_down)
 
 
-        gems_file = '../data/starfox_melody_gems_firstdraft.txt'
+        gems_file1 = '../data/corneria-2-melody-gems.txt'
+        gems_file2 = '../data/corneria-2-bass-gems.txt'
 
         barlines_file = '../data/barline.txt'
 
         base = "corneria-2"
 
-        self.song_data  = SongData(gems_file)
+        self.song_data1  = SongData(gems_file1)
+        self.song_data2 = SongData(gems_file2)
         self.audio_ctrl = AudioController(base)
 
         self.barlines_data  = BarlineData(barlines_file)
         
 
-        self.display1 = GameDisplay(self.song_data, self.barlines_data, self.audio_ctrl, 1)
-        self.display2 = GameDisplay(self.song_data, self.barlines_data, self.audio_ctrl, 2)
+        self.display1 = GameDisplay(self.song_data1, self.barlines_data, self.audio_ctrl, 1)
+        self.display2 = GameDisplay(self.song_data2, self.barlines_data, self.audio_ctrl, 2)
         
         self.canvas.add(self.display1)
         self.canvas.add(self.display2)
@@ -98,8 +100,8 @@ class MainWidget(BaseWidget):
 
         # state varaible for movement
 
-        self.player1 = Player(self.song_data, self.audio_ctrl, self.display1, 1, self.boss_incoming, self.boss_outgoing, self.boss_flip, self.end)
-        self.player2 = Player(self.song_data, self.audio_ctrl, self.display2, 2, self.boss_incoming, self.boss_outgoing, self.boss_flip, self.end)
+        self.player1 = Player(self.song_data1, self.audio_ctrl, self.display1, 1, self.boss_incoming, self.boss_outgoing, self.boss_flip, self.end)
+        self.player2 = Player(self.song_data2, self.audio_ctrl, self.display2, 2, self.boss_incoming, self.boss_outgoing, self.boss_flip, self.end)
 
     # functions for reading gamepad inputs 
     # show values in console
@@ -972,7 +974,7 @@ class Player(object):
                         self.display.miss()
         
         if self.display.state == "normal":
-            if self.score == 1:
+            if self.score == 20:
                 self.boss_incoming()
                 self.score = 0
         
@@ -996,7 +998,7 @@ class Player(object):
 
         if self.display.goat.health <= 0:
             print("Goat lost all life")
-            exit()
+            #exit()
             
 
 
