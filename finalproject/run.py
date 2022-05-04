@@ -803,6 +803,7 @@ class GameDisplay(InstructionGroup):
 
     def playback(self, beats):
         # second boss cycle
+        self.remove(self.label)
         if beats is None:
             self.beats = []
             self.state = "boss2"
