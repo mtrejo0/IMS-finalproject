@@ -8,6 +8,7 @@ from imslib.audio import Audio
 from imslib.mixer import Mixer
 from imslib.wavegen import WaveGenerator, SpeedModulator
 from imslib.wavesrc import WaveBuffer, WaveFile
+from imslib.screen import ScreenManager, Screen
 
 from kivy.graphics.instructions import InstructionGroup
 from kivy.clock import Clock
@@ -16,6 +17,7 @@ from kivy.core.window import Window
 from kivy import metrics
 from kivy.core.image import Image
 from kivy.properties import ObjectProperty, ListProperty
+from kivy.uix.button import Button
 
 
 from imslib.gfxutil import topleft_label, resize_topleft_label, CEllipse, CRectangle, CLabelRect, Rectangle
@@ -30,6 +32,21 @@ nowbar_h_margin = 0.1 # margin on either side of the nowbar (as proportion of wi
 time_span = 2.0       # time (in seconds) that spans the full vertical height of the Window
 beat_marker_len = 0.2 # horizontal length of beat marker (as a proportion of window width)
 px = metrics.dp(1) 
+
+# metrics allows kivy to create screen-density-independent sizes. 
+# Here, 20 dp will always be the same physical size on screen regardless of resolution or OS.
+# Another option is to use metrics.pt or metrics.sp. See https://kivy.org/doc/stable/api-kivy.metrics.html
+font_sz = metrics.dp(20)
+button_sz = metrics.dp(100)
+
+# IntroScreen is just like a MainWidget, but it derives from Screen instead of BaseWidget.
+# This allows it to work with the ScreenManager system.
+
+levelFiles = {}
+levelFiles['Corneria'] = 'corneria-2'
+levelFiles['March'] = 'imperial'
+levelFiles['Dedede'] = 'dedede'
+levelName = 'Corneria'
 
 def time_to_xpos(time):
     now_x = Window.width * nowbar_laser
@@ -50,9 +67,87 @@ def get_lane(y):
 
     return int(y//margin)
 
+class InstructionScreen(Screen):
+    def __init__(self, **kwargs):
+        super(InstructionScreen, self).__init__(always_update=True, **kwargs)
 
+        self.info = topleft_label(font_size = '60sp')
+        self.info.text = "Instructions: Shoot the notes the same color as your goat\n"
+        self.info.text += "Press up and down on the keypad/dpad to move up and down"
+        self.info.text += "\nPress any button on the controller/spacebar on keyboard to fire the laser when the note reaches the reticle"
+        self.info.text += "\n\nHit space on the keyboard when ready to play"
 
-class MainWidget(BaseWidget):
+        self.add_widget(self.info)
+
+        self.level = 'Corneria'
+        
+    def on_key_down(self, keycode, modifiers):
+        if keycode[1] == 'spacebar':
+            print(levelName)
+            print('MainScreen next')
+            self.switch_to('main')
+
+    def levelSelect(self, levelName):
+        self.level = levelName
+
+        
+class SelectScreen(Screen):
+    def __init__(self, **kwargs):
+        super(SelectScreen, self).__init__(always_update=True, **kwargs)
+
+        self.info = topleft_label()
+        self.info.text = "Level Select"
+        self.info.text += "Select a level\n"
+        self.add_widget(self.info)
+
+        self.counter = 0
+
+        # A button is a widget. It must be added with add_widget()
+        # button.bind allows you to set up a reaction to when the button is pressed (or released).
+        # It takes a function as argument. You can define one, or just use lambda as an inline function.
+        # In this case, the button will cause a screen switch
+        self.button1 = Button(text='Corneria\n(Medium)', font_size=font_sz, size = (button_sz, button_sz), pos = (Window.width/4, Window.height/2))
+        self.button1.bind(on_release= lambda x: self.levelSelect('Corneria'))
+        self.add_widget(self.button1)
+
+        self.button2 = Button(text='Imperial March\n(Easy)', font_size=font_sz * .75, size = (button_sz, button_sz), pos = (Window.width /2 , Window.height/2))
+        self.button2.bind(on_release= lambda x: self.levelSelect('March'))
+        self.add_widget(self.button2)
+
+        self.button3 = Button(text='King Dedede\'s Theme\n(Hard)', font_size=font_sz * .75, size = (button_sz, button_sz), pos = (Window.width * .75, Window.height/2))
+        self.button3.bind(on_release= lambda x: self.levelSelect('Dedede'))
+        self.add_widget(self.button3)
+
+    def levelSelect(self, name):
+        global levelName
+        global sm
+        levelName = name
+        sm.add_screen(MainScreen(name='main'))
+        self.switch_to('Instructions')
+
+    # def on_key_down(self, keycode, modifiers):
+    #     if keycode[1] == 'right':
+    #         # tell screen manager to switch from the current screen to some other screen, by name.
+    #         print('IntroScreen next')
+    #         self.switch_to('main')
+
+    # this shows that on_update() gets called when this screen is active.
+    # if you want on_update() called when a screen is NOT active, then pass in an extra argument:
+    # always_update=True to the screen constructor.
+    def on_update(self):
+        self.info.text = "Level Select\n"
+        self.info.text += "Select A Level With Mouse\n"
+        
+
+    # on_resize always gets called - even when a screen is not active.
+    def on_resize(self, win_size):
+        self.button1.pos = (Window.width/4, Window.height/2)
+        self.button2.pos = (Window.width/2, Window.height/2)
+        self.button3.pos = (Window.width*.75, Window.height/2)
+        resize_topleft_label(self.info)
+
+class MainScreen(Screen):
+
     # fire / trigger axis
     FIRE = (2, 5)
     STOP_FIRE = -32767
@@ -64,8 +159,8 @@ class MainWidget(BaseWidget):
     VALUES = ListProperty([])
     HOLD = ObjectProperty(None)
 
-    def __init__(self):
-        super(MainWidget, self).__init__()
+    def __init__(self, **kwargs):
+        super(MainScreen, self).__init__(**kwargs)
 
         # bind all the controller input
         Window.bind(on_joy_button_up=self.on_joy_button_up)
@@ -75,7 +170,7 @@ class MainWidget(BaseWidget):
 
         # base = "corneria-2"
         # base = "dedede"
-        base = "imperial"
+        base = levelFiles[levelName]
 
 
         gems_file1 = f'../data/{base}-melody-gems.txt'
@@ -83,6 +178,22 @@ class MainWidget(BaseWidget):
 
         barlines_file = '../data/barline.txt'
 
+        self.objects = []
+
+    def on_enter(self):
+        # this is called when a screen is about to become active.
+        for o in self.objects:
+            self.canvas.remove(o)
+        self.objects = []
+        base = levelFiles[levelName]
+        gems_file1 = '../data/' + base + '-melody-gems.txt'
+        gems_file2 = '../data/' + base + '-bass-gems.txt'
+
+        barlines_file = '../data/barline.txt'
+
+        
+
+        self.objects = []
         self.song_data1  = SongData(gems_file1)
         self.song_data2 = SongData(gems_file2)
         self.audio_ctrl = AudioController(base)
@@ -103,6 +214,12 @@ class MainWidget(BaseWidget):
 
         self.player1 = Player(self.song_data1, self.audio_ctrl, self.display1, 1, self.boss_incoming, self.boss_outgoing, self.boss_flip, self.end)
         self.player2 = Player(self.song_data2, self.audio_ctrl, self.display2, 2, self.boss_incoming, self.boss_outgoing, self.boss_flip, self.end)
+
+    def on_exit(self):
+        for o in self.objects:
+            self.canvas.remove(o)
+        self.objects = []
+        self.canvas.clear()
 
     def on_joy_button_down(self, win, stickid, buttonid):
         if buttonid in [0,1,2,3]:
@@ -168,6 +285,9 @@ class MainWidget(BaseWidget):
         self.player1.on_update(now)
         self.player2.on_update(now)
 
+        if self.player1.dead or self.player2.dead:
+            self.switch_to('end')
+
         self.info.text = 'p: pause/unpause song\n'
         self.info.text += f'song time: {now:.2f}\n'
         self.info.text += f'P1: {self.player1.score}\n'
@@ -227,6 +347,28 @@ class MainWidget(BaseWidget):
         self.canvas.add(CRectangle(cpos=(0,0), csize=(10000,10000)))
         label = CLabelRect(text="Game Over\n\nAdd 4 more credits to play\nPress R to play again", cpos=(Window.width/2,Window.height/2), font_size=21)
         self.canvas.add(label)
+
+
+class EndScreen(Screen):
+    def __init__(self, **kwargs):
+        super(EndScreen, self).__init__(**kwargs)
+
+        self.info = topleft_label()
+        self.info.text = "Game Over: You are baaad\n"
+        self.info.text += "<-: switch main\n"
+        self.add_widget(self.info)
+
+        self.button1 = Button(text='Retry', font_size=font_sz, size = (button_sz, button_sz), pos = (Window.width/3, Window.height/2))
+        self.button1.bind(on_release= lambda x: self.switch_to('main'))
+        self.add_widget(self.button1)
+
+        self.button2 = Button(text='Level Select', font_size=font_sz * .75, size = (button_sz, button_sz), pos = (Window.width * 2 / 3 , Window.height/2))
+        self.button2.bind(on_release= lambda x: self.switch_to('Select'))
+        self.add_widget(self.button2)
+    def on_key_down(self, keycode, modifiers):
+        if keycode[1] == 'left':
+            print('EndScreen prev')
+            self.switch_to('main')
 
 # Handles everything about Audio.
 #   creates the main Audio object
@@ -959,6 +1101,7 @@ class Player(object):
         self.end = end
         # number of cycles it takes to kill the boss
         self.boss_health = 2
+        self.dead = False
         
 
     # called by MainWidget
@@ -1051,16 +1194,25 @@ class Player(object):
 
         if self.display.goat.health <= 0:
             print("Goat lost all life")
+            self.dead = True
             #exit()
             
 
 
 
 
-            
-
 if __name__ == "__main__":
-    run(MainWidget())
+    sm = ScreenManager()
+
+    # add all screens to the manager. By default, the first screen added is the current screen.
+    # each screen must have a name argument (so that switch_to() will work).
+    # If screens need to share data between themselves, feel free to pass in additional arguments
+    # like a shared data class or they can even know directly about each other as needed.
+
+    sm.add_screen(SelectScreen(name='Select'))
+    sm.add_screen(InstructionScreen(name='Instructions'))
+    sm.add_screen(EndScreen(name='end'))
+    run(sm)
 
 # change to explosions after hitting the target
 # animate the goat moving through space
