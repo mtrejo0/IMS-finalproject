@@ -153,7 +153,9 @@ class SelectScreen(Screen):
 
     # on_resize always gets called - even when a screen is not active.
     def on_resize(self, win_size):
-        self.button1.pos = (Window.width/2, Window.height/2)
+        self.button1.pos = (Window.width/4, Window.height/2)
+        self.button2.pos = (Window.width/2, Window.height/2)
+        self.button3.pos = (Window.width*.75, Window.height/2)
         resize_topleft_label(self.info)
 
 
@@ -190,6 +192,26 @@ class MainScreen(Screen):
         
 
         self.objects = []
+
+    # functions for reading gamepad inputs 
+    # show values in console
+    # on_enter gets called when a screen is about to enter. You can use this to setup or initialize
+    # stuff on this screen. Here, we remove whatever drawing happens to be here already.
+    # If you remove this code, then the previous drawing of objects will remain on screen.
+    def on_enter(self):
+        # this is called when a screen is about to become active.
+        for o in self.objects:
+            self.canvas.remove(o)
+        self.objects = []
+        base = levelFiles[levelName]
+        gems_file1 = '../data/' + base + '-melody-gems.txt'
+        gems_file2 = '../data/' + base + '-bass-gems.txt'
+
+        barlines_file = '../data/barline.txt'
+
+        
+
+        self.objects = []
         self.song_data1  = SongData(gems_file1)
         self.song_data2 = SongData(gems_file2)
         self.audio_ctrl = AudioController(base)
@@ -211,8 +233,20 @@ class MainScreen(Screen):
         self.player1 = Player(self.song_data1, self.audio_ctrl, self.display1, 1, self.boss_incoming, self.boss_outgoing, self.boss_flip, self.end)
         self.player2 = Player(self.song_data2, self.audio_ctrl, self.display2, 2, self.boss_incoming, self.boss_outgoing, self.boss_flip, self.end)
 
-    # functions for reading gamepad inputs 
-    # show values in console
+    def on_exit(self):
+        for o in self.objects:
+            self.canvas.remove(o)
+        self.objects = []
+        
+        
+        
+        self.canvas.clear()
+        
+
+        # state varaible for movement
+
+        self.player1 = None
+        self.player2 = None
     def print_values(self, *args):
         print(self.VALUES)
 
@@ -365,44 +399,6 @@ class MainScreen(Screen):
         label = CLabelRect(text="Game Over\n\nAdd 4 more credits to play\nPress R to play again", cpos=(Window.width/2,Window.height/2), font_size=21)
         self.canvas.add(label)
 
-
-    # on_enter gets called when a screen is about to enter. You can use this to setup or initialize
-    # stuff on this screen. Here, we remove whatever drawing happens to be here already.
-    # If you remove this code, then the previous drawing of objects will remain on screen.
-    def on_enter(self):
-        # this is called when a screen is about to become active.
-        for o in self.objects:
-            self.canvas.remove(o)
-        self.objects = []
-        # base = levelFiles[levelName]
-        # gems_file1 = '../data/' + base + '-melody-gems.txt'
-        # gems_file2 = '../data/' + base + '-bass-gems.txt'
-
-        # barlines_file = '../data/barline.txt'
-
-        
-
-        # self.objects = []
-        # self.song_data1  = SongData(gems_file1)
-        # self.song_data2 = SongData(gems_file2)
-        # self.audio_ctrl = AudioController(base)
-
-        # self.barlines_data  = BarlineData(barlines_file)
-        
-
-        # self.display1 = GameDisplay(self.song_data1, self.barlines_data, self.audio_ctrl, 1)
-        # self.display2 = GameDisplay(self.song_data2, self.barlines_data, self.audio_ctrl, 2)
-        
-        # self.canvas.add(self.display1)
-        # self.canvas.add(self.display2)
-
-        # self.info = topleft_label()
-        # self.add_widget(self.info)
-
-        # # state varaible for movement
-
-        # self.player1 = Player(self.song_data1, self.audio_ctrl, self.display1, 1, self.boss_incoming, self.boss_outgoing, self.boss_flip, self.end)
-        # self.player2 = Player(self.song_data2, self.audio_ctrl, self.display2, 2, self.boss_incoming, self.boss_outgoing, self.boss_flip, self.end)
 
 class AudioController(object):
     def __init__(self, song_path):
@@ -1161,6 +1157,13 @@ class EndScreen(Screen):
         self.info.text += "<-: switch main\n"
         self.add_widget(self.info)
 
+        self.button1 = Button(text='Retry', font_size=font_sz, size = (button_sz, button_sz), pos = (Window.width/3, Window.height/2))
+        self.button1.bind(on_release= lambda x: self.switch_to('main'))
+        self.add_widget(self.button1)
+
+        self.button2 = Button(text='Level Select', font_size=font_sz * .75, size = (button_sz, button_sz), pos = (Window.width * 2 / 3 , Window.height/2))
+        self.button2.bind(on_release= lambda x: self.switch_to('Select'))
+        self.add_widget(self.button2)
     def on_key_down(self, keycode, modifiers):
         if keycode[1] == 'left':
             print('EndScreen prev')
