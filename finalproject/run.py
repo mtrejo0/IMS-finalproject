@@ -68,9 +68,6 @@ class MainWidget(BaseWidget):
         super(MainWidget, self).__init__()
 
         # bind all the controller input
-        Window.bind(on_joy_hat=self.on_joy_hat)
-        Window.bind(on_joy_ball=self.on_joy_ball)
-        Window.bind(on_joy_axis=self.on_joy_axis)
         Window.bind(on_joy_button_up=self.on_joy_button_up)
         Window.bind(on_joy_button_down=self.on_joy_button_down)
 
@@ -106,45 +103,6 @@ class MainWidget(BaseWidget):
 
         self.player1 = Player(self.song_data1, self.audio_ctrl, self.display1, 1, self.boss_incoming, self.boss_outgoing, self.boss_flip, self.end)
         self.player2 = Player(self.song_data2, self.audio_ctrl, self.display2, 2, self.boss_incoming, self.boss_outgoing, self.boss_flip, self.end)
-
-    # functions for reading gamepad inputs 
-    # show values in console
-    def print_values(self, *args):
-        print(self.VALUES)
-
-    def joy_motion(self, event, id, axis, value):
-        # HAT first, returns max values
-        if isinstance(value, tuple):
-            if not value[0] and not value[1]:
-                Clock.unschedule(self.HOLD)
-            else:
-                self.VALUES = [event, id, axis, value]
-                self.HOLD = Clock.schedule_interval(self.print_values, 0)
-            
-            return
-
-        # unschedule if at zero or at minimum (FIRE)
-        if axis in self.FIRE and value < self.STOP_FIRE or abs(value) < self.OFFSET:
-            Clock.unschedule(self.HOLD)
-            return
-        elif abs(value) < self.OFFSET or self.HOLD:
-            Clock.unschedule(self.HOLD)
-
-        # schedule if over OFFSET (to prevent accidental event with low value)
-        if (axis in self.FIRE and value > self.STOP_FIRE or
-                axis not in self.FIRE and abs(value) >= self.OFFSET):
-            self.VALUES = [event, id, axis, value]
-            self.HOLD = Clock.schedule_interval(self.print_values, 0)
-
-    # replace window instance with identifier
-    def on_joy_axis(self, win, stickid, axisid, value):
-        self.joy_motion('axis', stickid, axisid, value)
-
-    def on_joy_ball(self, win, stickid, ballid, xvalue, yvalue):
-        self.joy_motion('ball', stickid, ballid, (xvalue, yvalue))
-
-    def on_joy_hat(self, win, stickid, hatid, value):
-        self.joy_motion('hat', stickid, hatid, value)
 
     def on_joy_button_down(self, win, stickid, buttonid):
         if buttonid in [0,1,2,3]:
@@ -216,15 +174,18 @@ class MainWidget(BaseWidget):
         self.info.text += f'P2: {self.player2.score}\n'
 
     def boss_incoming(self):
-        self.display1.remove_beats()
-        self.display1.goat.hide()
-        self.display2.boss_incoming()
+        self.display2.remove_beats()
+        self.display2.goat.hide()
+        self.display1.goat.health = 100
+        self.display2.goat.health = 100
+        self.display1.boss_incoming()
 
     def boss_flip(self):
         if len(self.display1.beats):
             self.display1.remove_beats()
             self.display1.goat.hide()
             self.display1.remove_taken()
+            self.display1.boss_transition()
 
             self.display2.add_taken()
             self.display2.goat.show()
@@ -234,6 +195,7 @@ class MainWidget(BaseWidget):
             self.display2.remove_beats()
             self.display2.goat.hide()
             self.display2.remove_taken()
+            self.display2.boss_transition()
 
             self.display1.add_taken()
             self.display1.goat.show()
@@ -667,7 +629,7 @@ class GameDisplay(InstructionGroup):
         
 
 
-        self.boss_health = 2
+        self.boss_health = 1
         
 
         self.add(Color(1,1,1))
@@ -741,6 +703,7 @@ class GameDisplay(InstructionGroup):
             if b in self.children:
                 self.children.remove(b)
     
+    # adds the boss beeats for the first player 
     def add_boss_beats(self):
         self.beats = []
         for b in self.beat_data:
@@ -778,14 +741,22 @@ class GameDisplay(InstructionGroup):
         self.remove_beats()
         self.incoming_color = Color(1,0,0)
         self.add(self.incoming_color)
-        self.label = CLabelRect(text="BOSS INCOMING\n\nHELP ME GOAT YOURE MY ONLY HOPE!", cpos=(Window.width/2,Window.height/2), font_size=21)
+        self.label = CLabelRect(text="BOSS INCOMING\n\nHELP ME GOAT 1 YOU'RE MY ONLY HOPE!", cpos=(Window.width/2,Window.height/2), font_size=21)
         self.add(self.label)
 
         self.add_taken()
+
+    def boss_transition(self):
+        self.state = "boss_transition"
+        self.remove_beats()
+        self.incoming_color = Color(1,0,0)
+        self.add(self.incoming_color)
+        self.label = CLabelRect(text="COPY WHAT I DID GOAT 2!", cpos=(Window.width/2,Window.height/2), font_size=21)
+        self.add(self.label)
         
 
     def boss_start(self):
-        self.state = "boss"
+        self.state = "boss1"
         self.remove(self.label)
         self.add_boss_beats()
 
@@ -815,7 +786,7 @@ class GameDisplay(InstructionGroup):
 
     def playback(self, beats):
 
-        self.state = "playback"
+        self.state = "playback1"
 
         self.remove_beats()
         self.audio_ctrl.reset()
@@ -871,6 +842,16 @@ class GameDisplay(InstructionGroup):
                 self.boss_count = 0
             else:
                 self.boss_count += 1
+        if self.state == "boss_transition":
+
+            if self.boss_count % 10 == 0:
+                self.incoming_color.rgb = choice([(1,1,1), (1,0,0)])
+            
+            if self.boss_count > 300:
+                self.boss_start()
+                self.boss_count = 0
+            else:
+                self.boss_count += 1
 
         if self.state == "boss_outgoing":
             
@@ -883,7 +864,7 @@ class GameDisplay(InstructionGroup):
             else:
                 self.boss_count += 1
         
-        if self.state == "boss":
+        if self.state == "boss1":
             
             boss_x = Window.width - Window.width/8
             boss_y = Window.height/2
@@ -990,7 +971,7 @@ class Player(object):
             if each in self.display.beats:
                 gem_x,_ = each.gem.cpos
 
-                if Window.width*nowbar_laser - gem_x > 50 and each.hit == False:
+                if Window.width*nowbar_laser - gem_x > 100 and each.hit == False:
                     if each.color.a == 1:
                         each.on_pass()
                         if each.game_over:
@@ -999,21 +980,39 @@ class Player(object):
                         self.audio_ctrl.play_miss()
 
                         self.display.miss()
+
+        # check the boss phases
         
         if self.display.state == "normal":
             if self.score == 1:
                 self.boss_incoming()
                 self.score = 0
         
-        if self.display.state == "boss":
-            if self.score == 20:
+        if self.display.state == "boss1":
+            if self.score == 4:
+                self.score = 0
+                self.boss_flip()
+        if self.display.state == "boss2":
+            if self.score == 16:
                 self.score = 0
                 self.boss_flip()
 
 
-        if self.display.state == "playback":
+        if self.display.state == "playback1":
             
-            if self.score == 2:
+            if self.score == 4:
+                self.score = 0
+                self.boss_health -= 1
+                self.display.boss_health = self.boss_health
+                if self.boss_health <= 0:
+                    self.boss_outgoing()
+                else:
+                    self.boss_flip()
+            
+
+        if self.display.state == "playback2":
+            
+            if self.score == 16:
                 self.score = 0
                 self.boss_health -= 1
                 self.display.boss_health = self.boss_health
