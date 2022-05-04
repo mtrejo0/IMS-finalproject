@@ -185,21 +185,30 @@ class MainWidget(BaseWidget):
             self.display1.remove_beats()
             self.display1.goat.hide()
             self.display1.remove_taken()
-            self.display1.boss_transition()
+            
+            if self.display1.state == "boss1":
+                self.display2.boss_transition(self.display1.playback_gems)
+            elif self.display1.state == "playback1":
+                self.display2.boss_transition(None)
 
             self.display2.add_taken()
             self.display2.goat.show()
-            self.display2.playback(self.display1.playback_gems)
+
 
         else:
             self.display2.remove_beats()
             self.display2.goat.hide()
             self.display2.remove_taken()
-            self.display2.boss_transition()
+            self.display1.boss_transition(self.display2.playback_gems)
+
+            if self.display2.state == "boss1":
+                self.display1.boss_transition(self.display1.playback_gems)
+            elif self.display2.state == "playback1":
+                self.display1.boss_transition(None)
 
             self.display1.add_taken()
             self.display1.goat.show()
-            self.display1.playback(self.display2.playback_gems)
+            # self.display1.playback(self.display2.playback_gems)
 
 
 
@@ -746,13 +755,21 @@ class GameDisplay(InstructionGroup):
 
         self.add_taken()
 
-    def boss_transition(self):
+    def boss_transition(self, gems):
         self.state = "boss_transition"
         self.remove_beats()
         self.incoming_color = Color(1,0,0)
         self.add(self.incoming_color)
-        self.label = CLabelRect(text="COPY WHAT I DID GOAT 2!", cpos=(Window.width/2,Window.height/2), font_size=21)
-        self.add(self.label)
+        # reset to player 1
+        if gems is None:
+            self.label = CLabelRect(text="BACK TO YOU!", cpos=(Window.width/2,Window.height/2), font_size=21)
+            self.add(self.label)
+            self.saved_gems = gems
+        else:
+            self.label = CLabelRect(text="COPY WHAT I DID GOAT 2!", cpos=(Window.width/2,Window.height/2), font_size=21)
+            self.add(self.label)
+            self.saved_gems = gems
+        
         
 
     def boss_start(self):
@@ -785,16 +802,25 @@ class GameDisplay(InstructionGroup):
         self.state = "normal"
 
     def playback(self, beats):
+        # second boss cycle
+        if beats is None:
+            self.beats = []
+            self.state = "boss2"
+            self.remove(self.label)
+            self.add_boss_beats()
 
-        self.state = "playback1"
+            self.audio_ctrl.reset()
+            self.audio_ctrl.toggle()
+        else:
+            self.state = "playback1"
 
-        self.remove_beats()
-        self.audio_ctrl.reset()
-        self.audio_ctrl.toggle()
-        self.beats = []
-        for b in beats:
-            beat = GemDisplay(b.time, b.lane, self.id)
-            self.beats.append(beat)
+            self.remove_beats()
+            self.audio_ctrl.reset()
+            self.audio_ctrl.toggle()
+            self.beats = []
+            for b in beats:
+                beat = GemDisplay(b.time, b.lane, self.id)
+                self.beats.append(beat)
 
         
 
@@ -848,7 +874,7 @@ class GameDisplay(InstructionGroup):
                 self.incoming_color.rgb = choice([(1,1,1), (1,0,0)])
             
             if self.boss_count > 300:
-                self.boss_start()
+                self.playback(self.saved_gems)
                 self.boss_count = 0
             else:
                 self.boss_count += 1
