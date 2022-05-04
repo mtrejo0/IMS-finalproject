@@ -306,9 +306,9 @@ class MainScreen(Screen):
             self.display1.goat.hide()
             self.display1.remove_taken()
             
-            if self.display1.state == "boss1":
+            if self.display1.state == "boss1" or self.display1.state == "boss2":
                 self.display2.boss_transition(self.display1.playback_gems)
-            elif self.display1.state == "playback1":
+            elif self.display1.state == "playback1" or self.display1.state == "playback2":
                 self.display2.boss_transition(None)
 
             self.display2.add_taken()
@@ -780,7 +780,7 @@ class GameDisplay(InstructionGroup):
         
 
 
-        self.boss_health = 1
+        self.boss_health = 2
         
 
         self.add(Color(1,1,1))
@@ -904,6 +904,7 @@ class GameDisplay(InstructionGroup):
         self.add(self.incoming_color)
         # reset to player 1
         if gems is None:
+            self.remove(self.label)
             self.label = CLabelRect(text="BACK TO YOU!", cpos=(Window.width/2,Window.height/2), font_size=21)
             self.add(self.label)
             self.saved_gems = gems
@@ -955,7 +956,9 @@ class GameDisplay(InstructionGroup):
             self.audio_ctrl.reset()
             self.audio_ctrl.toggle()
         else:
-            self.state = "playback1"
+            if len(beats) < 10:
+                self.state = "playback1"
+            else: self.state = "playback2"
 
             self.remove_beats()
             self.audio_ctrl.reset()
@@ -973,7 +976,7 @@ class GameDisplay(InstructionGroup):
 
         self.now_time = now_time
 
-        beats = self.beats.copy()
+        beats = self.beats
         for b in beats:
             vis = b.on_update(now_time)
 
@@ -1018,6 +1021,7 @@ class GameDisplay(InstructionGroup):
             
             if self.boss_count > 300:
                 self.playback(self.saved_gems)
+                self.remove(self.label)
                 self.boss_count = 0
             else:
                 self.boss_count += 1
@@ -1078,7 +1082,7 @@ class GameDisplay(InstructionGroup):
         pass
 
     def miss(self):
-        self.goat.health -= 10
+        self.goat.health -= 1
 
         
 
@@ -1093,6 +1097,7 @@ class Player(object):
         self.audio_ctrl = audio_ctrl
         self.song_data = song_data
         self.score = 0
+        self.miss_count = 0
         self.state = 'normal'
         self.id = id
         self.boss_incoming = boss_incoming
@@ -1148,48 +1153,46 @@ class Player(object):
                             print("game over")
                             exit()
                         self.audio_ctrl.play_miss()
-
+                        self.miss_count +=1
                         self.display.miss()
 
         # check the boss phases
-        
+        missed = self.miss_count
         if self.display.state == "normal":
-            if self.score == 1:
+            if self.score == 50:
                 self.boss_incoming()
                 self.score = 0
         
         if self.display.state == "boss1":
             if self.score == 4:
                 self.score = 0
+                self.miss_count = 0
                 self.boss_flip()
         if self.display.state == "boss2":
             if self.score == 16:
+                self.miss_count = 0
                 self.score = 0
                 self.boss_flip()
 
 
         if self.display.state == "playback1":
             
-            if self.score == 4:
+            if self.score + missed >= 4:
                 self.score = 0
+                self.miss_count = 0
                 self.boss_health -= 1
                 self.display.boss_health = self.boss_health
-                if self.boss_health <= 0:
-                    self.boss_outgoing()
-                else:
-                    self.boss_flip()
+                self.boss_flip()
             
 
         if self.display.state == "playback2":
             
-            if self.score == 16:
+            if self.score + missed >= 16:
+                self.miss_count = 0
                 self.score = 0
                 self.boss_health -= 1
                 self.display.boss_health = self.boss_health
-                if self.boss_health <= 0:
-                    self.boss_outgoing()
-                else:
-                    self.boss_flip()
+                self.boss_outgoing()
 
 
         if self.display.goat.health <= 0:
