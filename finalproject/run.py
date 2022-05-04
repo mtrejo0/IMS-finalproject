@@ -87,6 +87,9 @@ class InstructionScreen(Screen):
             print('MainScreen next')
             self.switch_to('main')
 
+    def on_resize(self, win_size):
+        resize_topleft_label(self.info)
+
     def levelSelect(self, levelName):
         self.level = levelName
 
@@ -106,6 +109,15 @@ class SelectScreen(Screen):
         # button.bind allows you to set up a reaction to when the button is pressed (or released).
         # It takes a function as argument. You can define one, or just use lambda as an inline function.
         # In this case, the button will cause a screen switch
+        img = '../data/stars.jpeg'
+
+        self.back = CRectangle(cpos=(Window.height/2, Window.width/2), csize=(Window.height, Window.width), texture=Image(img).texture)
+        self.canvas.add(self.back)
+
+        self.canvas.add(Color(1,1,0))
+        self.title = CLabelRect(text="GOAT QUEST", cpos=(Window.width/2,100), font_size=50)
+        self.canvas.add(self.title)
+
         self.button1 = Button(text='Corneria\n(Medium)', font_size=font_sz, size = (button_sz, button_sz), pos = (Window.width/4, Window.height/2))
         self.button1.bind(on_release= lambda x: self.levelSelect('Corneria'))
         self.add_widget(self.button1)
@@ -114,7 +126,7 @@ class SelectScreen(Screen):
         self.button2.bind(on_release= lambda x: self.levelSelect('March'))
         self.add_widget(self.button2)
 
-        self.button3 = Button(text='King Dedede\'s Theme\n(Hard)', font_size=font_sz * .75, size = (button_sz, button_sz), pos = (Window.width * .75, Window.height/2))
+        self.button3 = Button(text='King Dedede\'s\n Theme\n(Hard)', font_size=font_sz * .75, size = (button_sz, button_sz), pos = (Window.width * .75, Window.height/2))
         self.button3.bind(on_release= lambda x: self.levelSelect('Dedede'))
         self.add_widget(self.button3)
 
@@ -141,10 +153,16 @@ class SelectScreen(Screen):
 
     # on_resize always gets called - even when a screen is not active.
     def on_resize(self, win_size):
+        self.back.size = (Window.width, Window.height)
+        self.back.pos = (0,0)
         self.button1.pos = (Window.width/4, Window.height/2)
         self.button2.pos = (Window.width/2, Window.height/2)
         self.button3.pos = (Window.width*.75, Window.height/2)
         resize_topleft_label(self.info)
+        self.canvas.remove(self.title)
+        self.canvas.add(Color(1,1,0))
+        self.title = CLabelRect(text="GOAT QUEST", cpos=(Window.width/2,100), font_size=50)
+        self.canvas.add(self.title)
 
 class MainScreen(Screen):
 
@@ -161,6 +179,7 @@ class MainScreen(Screen):
 
     def __init__(self, **kwargs):
         super(MainScreen, self).__init__(**kwargs)
+        self.info = topleft_label()
 
         # bind all the controller input
         Window.bind(on_joy_button_up=self.on_joy_button_up)
@@ -224,6 +243,8 @@ class MainScreen(Screen):
     def on_joy_button_down(self, win, stickid, buttonid):
         if buttonid in [0,1,2,3]:
             self.player1.on_button_action_down('spacebar')
+        elif buttonid == 10:
+            self.audio_ctrl.toggle()
         elif buttonid == 11:
             self.player1.on_button_action_down('up')
         elif buttonid == 12:
@@ -231,6 +252,7 @@ class MainScreen(Screen):
         
 
     def on_joy_button_up(self, win, stickid, buttonid):
+        print(buttonid)
         if buttonid in [0,1,2,3]:
             self.player1.on_button_action_up('spacebar')
         elif buttonid == 11:
@@ -287,6 +309,8 @@ class MainScreen(Screen):
 
         if self.player1.dead or self.player2.dead:
             self.switch_to('end')
+        if self.display1.state == "over" or self.display2.state == "over":
+            self.switch_to('Select')
 
         self.info.text = 'p: pause/unpause song\n'
         self.info.text += f'song time: {now:.2f}\n'
@@ -369,6 +393,8 @@ class EndScreen(Screen):
         if keycode[1] == 'left':
             print('EndScreen prev')
             self.switch_to('main')
+    def on_resize(self, win_size):
+        resize_topleft_label(self.info)
 
 # Handles everything about Audio.
 #   creates the main Audio object
@@ -942,7 +968,7 @@ class GameDisplay(InstructionGroup):
     def boss_end(self):
         self.remove(self.label)
         self.add_normal_beats()
-        self.state = "normal"
+        self.state = "over"
 
     def playback(self, beats):
         # second boss cycle
@@ -1032,6 +1058,7 @@ class GameDisplay(InstructionGroup):
                 self.incoming_color.rgb = choice([(1,1,1), (1,0,0)])
             
             if self.boss_count > 300:
+                #
                 self.boss_end()
                 self.boss_count = 0
             else:
@@ -1107,6 +1134,7 @@ class Player(object):
         # number of cycles it takes to kill the boss
         self.boss_health = 2
         self.dead = False
+        self.win = False
         
 
     # called by MainWidget
@@ -1159,7 +1187,7 @@ class Player(object):
         # check the boss phases
         missed = self.miss_count
         if self.display.state == "normal":
-            if self.score == 50:
+            if self.score == 30:
                 self.boss_incoming()
                 self.score = 0
         
@@ -1193,6 +1221,7 @@ class Player(object):
                 self.boss_health -= 1
                 self.display.boss_health = self.boss_health
                 self.boss_outgoing()
+                
 
 
         if self.display.goat.health <= 0:
