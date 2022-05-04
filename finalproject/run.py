@@ -75,12 +75,12 @@ class MainWidget(BaseWidget):
         Window.bind(on_joy_button_down=self.on_joy_button_down)
 
 
-        gems_file1 = '../data/corneria-2-melody-gems.txt'
-        gems_file2 = '../data/corneria-2-bass-gems.txt'
+        gems_file1 = '../data/dedede-melody-gems.txt'
+        gems_file2 = '../data/dedede-bass-gems.txt'
 
         barlines_file = '../data/barline.txt'
 
-        base = "corneria-2"
+        base = "dedede"
 
         self.song_data1  = SongData(gems_file1)
         self.song_data2 = SongData(gems_file2)
